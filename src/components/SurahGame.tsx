@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
@@ -60,6 +61,40 @@ function calculateScore({
   seconds: number;
 }) {
   return Math.max(0, correct * 100 + streak * 10 - mistakes * 15 - seconds);
+}
+
+function getArabicTextStyle(text: string, placement: "choice" | "slot"): CSSProperties {
+  const length = text.length;
+
+  if (placement === "slot") {
+    if (length > 150) {
+      return { fontSize: "clamp(1.05rem, 3.4vw, 1.6rem)", lineHeight: 1.85 };
+    }
+
+    if (length > 95) {
+      return { fontSize: "clamp(1.15rem, 3.8vw, 1.85rem)", lineHeight: 1.8 };
+    }
+
+    return { fontSize: "clamp(1.25rem, 4.8vw, 2rem)", lineHeight: 1.75 };
+  }
+
+  if (length > 170) {
+    return { fontSize: "clamp(0.68rem, 2.2vw, 0.9rem)", lineHeight: 1.45 };
+  }
+
+  if (length > 140) {
+    return { fontSize: "clamp(0.78rem, 2.5vw, 1.02rem)", lineHeight: 1.5 };
+  }
+
+  if (length > 110) {
+    return { fontSize: "clamp(0.9rem, 2.9vw, 1.16rem)", lineHeight: 1.58 };
+  }
+
+  if (length > 70) {
+    return { fontSize: "clamp(1rem, 3.4vw, 1.32rem)", lineHeight: 1.65 };
+  }
+
+  return { fontSize: "clamp(1.15rem, 4vw, 1.55rem)", lineHeight: 1.7 };
 }
 
 export function SurahGame({ surah }: { surah: Surah }) {
@@ -379,6 +414,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                   </span>
                   <span
                     dir="rtl"
+                    style={current ? getArabicTextStyle(current.text, "slot") : undefined}
                     className="flex-1 text-right text-lg font-bold leading-relaxed text-[#142820] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.65rem]"
                   >
                     {current ? current.text : "Tarik ayat ke sini"}
@@ -615,13 +651,13 @@ export function SurahGame({ surah }: { surah: Surah }) {
             {choices.map((verse) => (
               <div
                 key={verse.id}
-                className={`flex min-h-32 flex-col justify-between gap-3 rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:p-4 md:min-h-36 ${
+                className={`flex h-36 flex-col justify-between gap-3 overflow-hidden rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:h-40 sm:p-4 md:h-44 ${
                   selected?.id === verse.id
                     ? "border-[#0f5f4a] bg-[#d9f3dc] dark:bg-[#143d33]"
                     : "border-[#dccb91] bg-white dark:border-[#376b60] dark:bg-[#102423]"
                 }`}
               >
-                <span className="text-left">
+                <span className="shrink-0 text-left">
                   <button
                     data-no-pan
                     type="button"
@@ -647,7 +683,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
                   }}
                   onDragEnd={() => setDraggingVerseId(null)}
                   dir="rtl"
-                  className="block flex-1 touch-none select-none text-right text-lg font-bold leading-relaxed text-[#1d2f28] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.55rem]"
+                  style={getArabicTextStyle(verse.text, "choice")}
+                  className="block min-h-0 flex-1 touch-none select-none overflow-hidden text-right font-bold text-[#1d2f28] dark:text-[#f2fbf7]"
                 >
                   {verse.text}
                 </button>
