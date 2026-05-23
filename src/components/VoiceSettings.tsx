@@ -83,14 +83,14 @@ export function VoiceSettings() {
 
       {isOpen ? (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-md min-h-screen overflow-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="voice-settings-title"
           onClick={closeModal}
         >
           <div
-            className="juz-scrollbar max-h-[88dvh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-[#dccb91] bg-white p-4 text-[#14342b] shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423] dark:text-[#eff8ed] sm:p-5"
+            className="juz-scrollbar mx-4 max-h-[88dvh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-[#dccb91] bg-white p-4 text-[#14342b] shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423] dark:text-[#eff8ed] sm:p-5"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">

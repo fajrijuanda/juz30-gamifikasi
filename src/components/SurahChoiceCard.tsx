@@ -50,14 +50,14 @@ export function SurahChoiceCard({ surah }: { surah: Surah }) {
 
       {isOpen ? (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-md min-h-screen overflow-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby={`surah-choice-${surah.id}`}
           onClick={() => setIsOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-3xl border border-[#dccb91] bg-white p-5 text-[#14342b] shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423] dark:text-[#eff8ed]"
+            className="mx-4 w-full max-w-md rounded-3xl border border-[#dccb91] bg-white p-5 text-[#14342b] shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423] dark:text-[#eff8ed]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">

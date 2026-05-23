@@ -484,7 +484,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
       {isGameMenuOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md min-h-screen overflow-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="game-menu-title"
@@ -493,7 +493,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
           }}
         >
           <div
-            className="w-full max-w-sm rounded-3xl border border-[#ddcc90] bg-white p-5 text-center shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423]"
+            className="mx-4 w-full max-w-sm rounded-3xl border border-[#ddcc90] bg-white p-5 text-center shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ffd56f] text-[#102423]">
@@ -558,14 +558,14 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
       {isMissionOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md min-h-screen overflow-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="mission-title"
           onClick={() => setIsMissionOpen(false)}
         >
           <div
-            className="w-full max-w-sm rounded-3xl border border-[#ddcc90] bg-white p-5 shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423]"
+            className="mx-4 w-full max-w-sm rounded-3xl border border-[#ddcc90] bg-white p-5 shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423]"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-3">
