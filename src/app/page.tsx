@@ -90,7 +90,7 @@ export default function Home() {
                 </div>
 
                 <div className="rounded-l-lg rounded-r-[2rem] border border-[#d9c98d] bg-white p-5 text-right shadow-xl">
-                  <p dir="rtl" className="text-4xl font-black leading-relaxed text-[#0f7c68]">
+                  <p dir="rtl" className="text-4xl font-normal leading-relaxed text-[#0f7c68]">
                     جزء عم
                   </p>
                   <div className="mt-5 space-y-2">
@@ -152,7 +152,7 @@ export default function Home() {
                     {surah.translation}
                   </p>
                 </div>
-                <p dir="rtl" className="text-2xl font-black text-[#0f7c68] dark:text-[#7be0bf] sm:text-3xl">
+                <p dir="rtl" className="text-2xl font-normal text-[#0f7c68] dark:text-[#7be0bf] sm:text-3xl">
                   {surah.name}
                 </p>
               </div>

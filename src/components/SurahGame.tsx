@@ -443,7 +443,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                   <span
                     dir="rtl"
                     style={current ? getArabicTextStyle(current.text, "slot") : undefined}
-                    className="flex-1 text-right text-lg font-bold leading-relaxed text-[#142820] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.65rem]"
+                    className="flex-1 text-right text-lg font-normal leading-relaxed text-[#142820] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.65rem]"
                   >
                     {current ? current.text : "Tarik ayat ke sini"}
                   </span>
@@ -712,7 +712,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                   onDragEnd={() => setDraggingVerseId(null)}
                   dir="rtl"
                   style={getArabicTextStyle(verse.text, "choice")}
-                  className="block min-h-0 flex-1 touch-none select-none overflow-hidden text-right font-bold text-[#1d2f28] dark:text-[#f2fbf7]"
+                  className="block min-h-0 flex-1 touch-none select-none overflow-hidden text-right font-normal text-[#1d2f28] dark:text-[#f2fbf7]"
                 >
                   {verse.text}
                 </button>
