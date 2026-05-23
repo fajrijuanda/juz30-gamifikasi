@@ -69,6 +69,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [draggingVerseId, setDraggingVerseId] = useState<number | null>(null);
   const [isPickerPanning, setIsPickerPanning] = useState(false);
   const [isMissionOpen, setIsMissionOpen] = useState(false);
+  const [isGameMenuOpen, setIsGameMenuOpen] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const [isRunning, setIsRunning] = useState(true);
   const [seconds, setSeconds] = useState(0);
   const [mistakes, setMistakes] = useState(0);
@@ -96,6 +98,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   }, [mistakes, placed, seconds, streak]);
 
   const isComplete = placed.length > 0 && placed.every(Boolean);
+  const isGameOver = isComplete || isFinished;
 
   useEffect(() => {
     if (initialized.current) return;
@@ -107,14 +110,27 @@ export function SurahGame({ surah }: { surah: Surah }) {
   }, [surah.verses]);
 
   useEffect(() => {
-    if (!isRunning || isComplete) return;
+    if (!isRunning || isGameOver) return;
 
     const interval = window.setInterval(() => {
       setSeconds((current) => current + 1);
     }, 1000);
 
     return () => window.clearInterval(interval);
-  }, [isComplete, isRunning]);
+  }, [isGameOver, isRunning]);
+
+  function saveProgress(finalScore: number) {
+    const nextProgress = {
+      completed: true,
+      bestScore: Math.max(progress.bestScore, finalScore),
+    };
+
+    setProgress(nextProgress);
+    window.localStorage.setItem(
+      `juz30-progress-${surah.id}`,
+      JSON.stringify(nextProgress),
+    );
+  }
 
   function restart() {
     setChoices(shuffle(surah.verses));
@@ -122,6 +138,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
     setSlotFeedback(Array.from({ length: surah.verses.length }, () => null));
     setSelected(null);
     setDraggingVerseId(null);
+    setIsFinished(false);
+    setIsGameMenuOpen(false);
     setSeconds(0);
     setMistakes(0);
     setStreak(0);
@@ -129,7 +147,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   }
 
   function pickVerse(verse: Verse) {
-    if (!isRunning || isComplete) return;
+    if (!isRunning || isGameOver) return;
     setSelected(verse);
   }
 
@@ -139,13 +157,13 @@ export function SurahGame({ surah }: { surah: Surah }) {
   }
 
   function placeVerse(index: number) {
-    if (!selected || !isRunning || isComplete || placed[index]) return;
+    if (!selected || !isRunning || isGameOver || placed[index]) return;
 
     submitVerseToSlot(index, selected);
   }
 
   function submitVerseToSlot(index: number, submittedVerse: Verse) {
-    if (!isRunning || isComplete || placed[index]) return;
+    if (!isRunning || isGameOver || placed[index]) return;
 
     const targetVerse = surah.verses[index];
 
@@ -178,17 +196,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
           mistakes,
           seconds,
         });
-        const nextProgress = {
-          completed: true,
-          bestScore: Math.max(progress.bestScore, finalScore),
-        };
-
         setIsRunning(false);
-        setProgress(nextProgress);
-        window.localStorage.setItem(
-          `juz30-progress-${surah.id}`,
-          JSON.stringify(nextProgress),
-        );
+        saveProgress(finalScore);
       }
 
       return;
@@ -231,6 +240,24 @@ export function SurahGame({ surah }: { surah: Surah }) {
     audio.onerror = () => setPlayingVerseId(null);
     setPlayingVerseId(verse.id);
     void audio.play().catch(() => setPlayingVerseId(null));
+  }
+
+  function openGameMenu() {
+    setIsRunning(false);
+    setIsGameMenuOpen(true);
+  }
+
+  function continueGame() {
+    if (!isGameOver) {
+      setIsRunning(true);
+    }
+    setIsGameMenuOpen(false);
+  }
+
+  function finishGame() {
+    setIsRunning(false);
+    setIsFinished(true);
+    saveProgress(score);
   }
 
   return (
@@ -279,7 +306,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 sm:flex">
+            <div className="grid grid-cols-2 gap-2 sm:flex">
               <button
                 type="button"
                 onClick={() => setIsMissionOpen(true)}
@@ -290,23 +317,11 @@ export function SurahGame({ surah }: { surah: Surah }) {
               </button>
               <button
                 type="button"
-                onClick={() => setIsRunning((current) => !current)}
+                onClick={openGameMenu}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-black text-[#0f5f4a] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
               >
-                {isRunning ? (
-                  <Pause className="h-4 w-4" aria-hidden="true" />
-                ) : (
-                  <Play className="h-4 w-4" aria-hidden="true" />
-                )}
-                {isRunning ? "Pause" : "Play"}
-              </button>
-              <button
-                type="button"
-                onClick={restart}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ffd56f] px-4 py-3 text-sm font-black text-[#2f2610] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
-              >
-                <RotateCcw className="h-4 w-4" aria-hidden="true" />
-                Acak Lagi
+                <Pause className="h-4 w-4" aria-hidden="true" />
+                Menu
               </button>
             </div>
           </div>
@@ -363,6 +378,80 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
       </section>
 
+      {isGameMenuOpen ? (
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="game-menu-title"
+          onClick={() => {
+            if (!isGameOver) continueGame();
+          }}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl border border-[#ddcc90] bg-white p-5 text-center shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#ffd56f] text-[#102423]">
+              {isGameOver ? (
+                <Trophy className="h-7 w-7" aria-hidden="true" />
+              ) : (
+                <Pause className="h-7 w-7" aria-hidden="true" />
+              )}
+            </div>
+            <h2 id="game-menu-title" className="mt-4 text-2xl font-black">
+              {isGameOver ? "Quest Selesai" : "Quest Dijeda"}
+            </h2>
+            <p className="mt-2 text-sm font-semibold text-[#637167] dark:text-[#adc5b9]">
+              Skor kamu saat ini
+            </p>
+            <p className="mt-1 text-5xl font-black text-[#0f7c68] dark:text-[#ffd56f]">
+              {score}
+            </p>
+
+            <div className="mt-6 grid gap-3">
+              {!isGameOver ? (
+                <button
+                  type="button"
+                  onClick={continueGame}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0f5f4a] px-5 py-3 text-sm font-black text-white transition hover:scale-[1.02]"
+                >
+                  <Play className="h-4 w-4" aria-hidden="true" />
+                  Lanjutkan
+                </button>
+              ) : null}
+              <button
+                type="button"
+                onClick={restart}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ffd56f] px-5 py-3 text-sm font-black text-[#2f2610] transition hover:scale-[1.02]"
+              >
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                Acak Lagi
+              </button>
+              {!isGameOver ? (
+                <button
+                  type="button"
+                  onClick={finishGame}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-[#0f5f4a] ring-1 ring-[#0f5f4a]/25 transition hover:scale-[1.02] dark:bg-[#1b3734] dark:text-[#eff8ed] dark:ring-white/10"
+                >
+                  <Trophy className="h-4 w-4" aria-hidden="true" />
+                  Selesai
+                </button>
+              ) : (
+                <Link
+                  href="/"
+                  onClick={showAppLoading}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-[#0f5f4a] ring-1 ring-[#0f5f4a]/25 transition hover:scale-[1.02] dark:bg-[#1b3734] dark:text-[#eff8ed] dark:ring-white/10"
+                >
+                  <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                  Ke Dashboard
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {isMissionOpen ? (
         <div
           className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 backdrop-blur-sm"
@@ -415,7 +504,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
               </div>
             </div>
 
-            {isComplete ? (
+            {isGameOver ? (
               <div className="mt-5 rounded-2xl bg-[#e3f7df] p-4 text-center dark:bg-[#143d33]">
                 <p className="text-2xl font-black text-[#177245] dark:text-[#8ce5c6]">
                   Selesai!
@@ -503,7 +592,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                   type="button"
                   data-no-pan
                   onClick={() => pickVerse(verse)}
-                  draggable={isRunning && !isComplete}
+                  draggable={isRunning && !isGameOver}
                   onDragStart={(event) => {
                     setDraggingVerseId(verse.id);
                     setSelected(verse);
