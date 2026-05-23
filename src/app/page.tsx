@@ -11,9 +11,10 @@ import {
   Trophy,
 } from "lucide-react";
 import { showAppLoading } from "@/components/AppLoadingScreen";
+import { SurahChoiceCard } from "@/components/SurahChoiceCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { VoiceSettings } from "@/components/VoiceSettings";
-import { getSurahLevel, juz30Surahs } from "@/lib/juz30";
+import { juz30Surahs } from "@/lib/juz30";
 
 export default function Home() {
   return (
@@ -153,39 +154,7 @@ export default function Home() {
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {juz30Surahs.map((surah) => (
-            <Link
-              key={surah.id}
-              href={`/surah/${surah.id}`}
-              onClick={showAppLoading}
-              className="group rounded-2xl border border-[#dccb91] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#0f7c68] hover:shadow-xl dark:border-[#376b60] dark:bg-[#102423]"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f5f4a] text-sm font-black text-white dark:bg-[#ffd56f] dark:text-[#102423]">
-                    {surah.id}
-                  </span>
-                  <h3 className="mt-4 text-xl font-black sm:text-2xl">
-                    {surah.transliteration}
-                  </h3>
-                  <p className="mt-1 text-sm font-bold text-[#637167] dark:text-[#adc5b9]">
-                    {surah.translation}
-                  </p>
-                </div>
-                <p dir="rtl" className="text-2xl font-normal text-[#0f7c68] dark:text-[#7be0bf] sm:text-3xl">
-                  {surah.name}
-                </p>
-              </div>
-              <div className="mt-5 flex items-center justify-between gap-3 text-sm font-black">
-                <span className="rounded-full bg-[#f7f1df] px-3 py-2 text-[#675a30] dark:bg-[#1b3734] dark:text-[#f3daa0]">
-                  <BookOpen className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />
-                  {surah.total_verses} ayat
-                </span>
-                <span className="rounded-full bg-[#d9f3dc] px-3 py-2 text-[#17603f] dark:bg-[#174038] dark:text-[#8ce5c6]">
-                  <Star className="mr-1 inline h-3.5 w-3.5 fill-current" aria-hidden="true" />
-                  {getSurahLevel(surah.total_verses)}
-                </span>
-              </div>
-            </Link>
+            <SurahChoiceCard key={surah.id} surah={surah} />
           ))}
         </div>
       </section>
