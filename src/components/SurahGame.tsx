@@ -65,6 +65,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [choices, setChoices] = useState<Verse[]>([]);
   const [placed, setPlaced] = useState<PlacedVerse[]>([]);
   const [selected, setSelected] = useState<Verse | null>(null);
+  const [draggingVerseId, setDraggingVerseId] = useState<number | null>(null);
   const [isRunning, setIsRunning] = useState(true);
   const [seconds, setSeconds] = useState(0);
   const [mistakes, setMistakes] = useState(0);
@@ -111,6 +112,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
     setPlaced(Array.from({ length: surah.verses.length }, () => null));
     setSlotFeedback(Array.from({ length: surah.verses.length }, () => null));
     setSelected(null);
+    setDraggingVerseId(null);
     setSeconds(0);
     setMistakes(0);
     setStreak(0);
@@ -122,19 +124,30 @@ export function SurahGame({ surah }: { surah: Surah }) {
     setSelected(verse);
   }
 
+  function resolveVerse(verseId: number | null) {
+    if (verseId === null) return null;
+    return choices.find((verse) => verse.id === verseId) ?? null;
+  }
+
   function placeVerse(index: number) {
     if (!selected || !isRunning || isComplete || placed[index]) return;
 
+    submitVerseToSlot(index, selected);
+  }
+
+  function submitVerseToSlot(index: number, submittedVerse: Verse) {
+    if (!isRunning || isComplete || placed[index]) return;
+
     const targetVerse = surah.verses[index];
 
-    if (selected.id === targetVerse.id) {
+    if (submittedVerse.id === targetVerse.id) {
       const nextStreak = streak + 1;
       const nextCorrect = placed.filter(Boolean).length + 1;
       const isFinishing = nextCorrect === surah.verses.length;
 
       setPlaced((current) => {
         const next = [...current];
-        next[index] = selected;
+        next[index] = submittedVerse;
         return next;
       });
       setSlotFeedback((current) => {
@@ -142,8 +155,11 @@ export function SurahGame({ surah }: { surah: Surah }) {
         next[index] = "correct";
         return next;
       });
-      setChoices((current) => current.filter((verse) => verse.id !== selected.id));
+      setChoices((current) =>
+        current.filter((verse) => verse.id !== submittedVerse.id),
+      );
       setSelected(null);
+      setDraggingVerseId(null);
       setStreak(nextStreak);
 
       if (isFinishing) {
@@ -289,13 +305,24 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 key={verse.id}
                 type="button"
                 onClick={() => placeVerse(index)}
+                onDragOver={(event) => {
+                  if (placed[index]) return;
+                  event.preventDefault();
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  const verseId = Number(event.dataTransfer.getData("text/plain"));
+                  const verse = resolveVerse(Number.isNaN(verseId) ? draggingVerseId : verseId);
+                  if (!verse) return;
+                  submitVerseToSlot(index, verse);
+                }}
                 disabled={Boolean(current)}
                 className={`min-h-20 rounded-2xl border-2 p-3 text-left shadow-sm transition sm:min-h-24 sm:p-4 ${
                   slotFeedback[index] === "correct"
                     ? "border-[#18a058] bg-[#e3f7df] ring-2 ring-[#18a058]/25 dark:bg-[#143d33]"
                     : slotFeedback[index] === "wrong"
                       ? "border-[#d64545] bg-[#ffe7e2] ring-2 ring-[#d64545]/25 dark:bg-[#4a1d1d]"
-                      : selected
+                      : selected || draggingVerseId
                         ? "border-dashed border-[#0f7c68] bg-white/85 hover:bg-white dark:bg-[#142927] dark:hover:bg-[#193632]"
                         : "border-dashed border-[#c6ad59] bg-[#fffaf0] dark:border-[#816f37] dark:bg-[#102423]"
                 } ${current ? "cursor-default" : "cursor-pointer"}`}
@@ -308,7 +335,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                     dir="rtl"
                     className="flex-1 text-right text-lg font-bold leading-relaxed text-[#142820] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.65rem]"
                   >
-                    {current ? current.text : "Pilih ayat dari bawah"}
+                    {current ? current.text : "Tarik ayat ke sini"}
                   </span>
                 </div>
               </button>
@@ -395,8 +422,16 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 <button
                   type="button"
                   onClick={() => pickVerse(verse)}
+                  draggable={isRunning && !isComplete}
+                  onDragStart={(event) => {
+                    setDraggingVerseId(verse.id);
+                    setSelected(verse);
+                    event.dataTransfer.setData("text/plain", verse.id.toString());
+                    event.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragEnd={() => setDraggingVerseId(null)}
                   dir="rtl"
-                  className="block flex-1 text-right text-lg font-bold leading-relaxed text-[#1d2f28] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.55rem]"
+                  className="block flex-1 touch-none select-none text-right text-lg font-bold leading-relaxed text-[#1d2f28] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.55rem]"
                 >
                   {verse.text}
                 </button>
