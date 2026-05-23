@@ -266,8 +266,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f0dd] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed]">
-      <section className="star-field sticky top-0 z-40 overflow-visible border-b border-[#d9c98d] bg-[#0f5f4a] text-white shadow-lg shadow-black/10 dark:border-[#23574e]">
+    <main className="min-h-screen bg-[#f6f0dd] pt-[18.5rem] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed] lg:pt-[10.75rem]">
+      <section className="star-field fixed inset-x-0 top-0 z-40 overflow-visible border-b border-[#d9c98d] bg-[#0f5f4a] text-white shadow-lg shadow-black/10 dark:border-[#23574e]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,213,111,0.34),transparent_28%),linear-gradient(135deg,rgba(18,132,104,0.95),rgba(10,66,75,0.95))]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-4 px-5 py-4 sm:px-8 lg:py-3">
           <div className="flex flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
