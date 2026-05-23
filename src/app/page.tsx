@@ -70,16 +70,43 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-full max-w-md justify-self-center rounded-3xl border border-white/20 bg-white/10 p-5 shadow-2xl shadow-black/20 backdrop-blur sm:rounded-[2rem] sm:p-6 md:max-w-lg">
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              {["78", "93", "100", "108", "112", "114"].map((item) => (
-                <div
-                  key={item}
-                  className="flex aspect-square items-center justify-center rounded-2xl bg-white text-lg font-black text-[#0f5f4a] shadow-lg dark:bg-[#f9efd0] sm:text-xl md:text-2xl"
-                >
-                  {item}
+          <div className="w-full max-w-md justify-self-center rounded-[2rem] border border-white/20 bg-white/10 p-5 shadow-2xl shadow-black/20 backdrop-blur md:max-w-lg">
+            <div className="relative min-h-72 overflow-hidden rounded-[1.5rem] bg-[#f9efd0] p-6 text-[#0f5f4a] shadow-inner shadow-white/40">
+              <div className="absolute right-5 top-5 rounded-full bg-[#0f5f4a] px-4 py-2 text-xs font-black text-[#ffd56f] shadow-lg">
+                Juz 30
+              </div>
+              <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-[#ffd56f]/45" />
+              <div className="absolute -bottom-12 right-2 h-36 w-36 rounded-full bg-[#0f7c68]/15" />
+
+              <div className="relative mx-auto mt-10 grid max-w-sm grid-cols-2 gap-3">
+                <div className="rounded-l-[2rem] rounded-r-lg border border-[#d9c98d] bg-white p-5 shadow-xl">
+                  <BookOpen className="mb-5 h-9 w-9 text-[#0f7c68]" aria-hidden="true" />
+                  <div className="space-y-2">
+                    <span className="block h-2 rounded-full bg-[#0f7c68]/25" />
+                    <span className="block h-2 w-10/12 rounded-full bg-[#0f7c68]/25" />
+                    <span className="block h-2 w-8/12 rounded-full bg-[#0f7c68]/25" />
+                  </div>
+                  <p className="mt-6 text-sm font-black text-[#0f5f4a]">Quest</p>
                 </div>
-              ))}
+
+                <div className="rounded-l-lg rounded-r-[2rem] border border-[#d9c98d] bg-white p-5 text-right shadow-xl">
+                  <p dir="rtl" className="text-4xl font-black leading-relaxed text-[#0f7c68]">
+                    جزء عم
+                  </p>
+                  <div className="mt-5 space-y-2">
+                    <span className="ml-auto block h-2 rounded-full bg-[#ffd56f]" />
+                    <span className="ml-auto block h-2 w-10/12 rounded-full bg-[#ffd56f]" />
+                    <span className="ml-auto block h-2 w-8/12 rounded-full bg-[#ffd56f]" />
+                  </div>
+                  <p className="mt-6 text-sm font-black text-[#675a30]">37 Surat</p>
+                </div>
+              </div>
+
+              <div className="relative mt-5 flex items-center justify-center gap-2 text-sm font-black text-[#0f5f4a]">
+                <Sparkles className="h-4 w-4 text-[#f0b429]" aria-hidden="true" />
+                Susun ayat, raih bintang
+                <Star className="h-4 w-4 fill-[#f0b429] text-[#f0b429]" aria-hidden="true" />
+              </div>
             </div>
           </div>
         </div>
