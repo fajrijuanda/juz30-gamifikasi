@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Surah, Verse } from "@/lib/juz30";
+import { getVerseAudioUrl } from "@/lib/juz30";
 
 type PlacedVerse = Verse | null;
 
@@ -54,6 +56,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [mistakes, setMistakes] = useState(0);
   const [streak, setStreak] = useState(0);
   const [slotFeedback, setSlotFeedback] = useState<SlotFeedback[]>([]);
+  const [playingVerseId, setPlayingVerseId] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [progress, setProgress] = useState<Progress>(() => {
     if (typeof window === "undefined") return emptyProgress;
 
@@ -170,18 +174,33 @@ export function SurahGame({ surah }: { surah: Surah }) {
     }, 700);
   }
 
+  function playVerseAudio(verse: Verse) {
+    const audio = audioRef.current ?? new Audio();
+    audioRef.current = audio;
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = getVerseAudioUrl(surah.id, verse.id);
+    audio.onended = () => setPlayingVerseId(null);
+    audio.onerror = () => setPlayingVerseId(null);
+    setPlayingVerseId(verse.id);
+    void audio.play().catch(() => setPlayingVerseId(null));
+  }
+
   return (
-    <main className="min-h-screen bg-[#f6f0dd] text-[#14342b]">
-      <section className="relative overflow-hidden border-b border-[#d9c98d] bg-[#0f5f4a] text-white">
+    <main className="min-h-screen bg-[#f6f0dd] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed]">
+      <section className="star-field relative overflow-hidden border-b border-[#d9c98d] bg-[#0f5f4a] text-white dark:border-[#23574e]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,213,111,0.34),transparent_28%),linear-gradient(135deg,rgba(18,132,104,0.95),rgba(10,66,75,0.95))]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-5 px-5 py-6 sm:px-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Link
-              href="/"
-              className="rounded-full border border-white/35 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
-            >
-              Kembali
-            </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                href="/"
+                className="rounded-full border border-white/35 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+              >
+                Kembali
+              </Link>
+              <ThemeToggle />
+            </div>
             <div className="grid w-full grid-cols-3 gap-2 text-center text-xs font-bold sm:w-auto sm:text-sm">
               <span className="rounded-full bg-white/15 px-3 py-2 sm:px-4">
                 Waktu {formatTime(seconds)}
@@ -228,7 +247,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(32svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 md:gap-6 lg:grid-cols-[1fr_320px]">
+      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(34svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 md:gap-6 lg:grid-cols-[1fr_320px]">
         <div className="grid gap-3">
           {surah.verses.map((verse, index) => {
             const current = placed[index];
@@ -241,21 +260,21 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 disabled={Boolean(current)}
                 className={`min-h-20 rounded-2xl border-2 p-3 text-left shadow-sm transition sm:min-h-24 sm:p-4 ${
                   slotFeedback[index] === "correct"
-                    ? "border-[#18a058] bg-[#e3f7df] ring-2 ring-[#18a058]/25"
+                    ? "border-[#18a058] bg-[#e3f7df] ring-2 ring-[#18a058]/25 dark:bg-[#143d33]"
                     : slotFeedback[index] === "wrong"
-                      ? "border-[#d64545] bg-[#ffe7e2] ring-2 ring-[#d64545]/25"
+                      ? "border-[#d64545] bg-[#ffe7e2] ring-2 ring-[#d64545]/25 dark:bg-[#4a1d1d]"
                       : selected
-                        ? "border-dashed border-[#0f7c68] bg-white/85 hover:bg-white"
-                        : "border-dashed border-[#c6ad59] bg-[#fffaf0]"
+                        ? "border-dashed border-[#0f7c68] bg-white/85 hover:bg-white dark:bg-[#142927] dark:hover:bg-[#193632]"
+                        : "border-dashed border-[#c6ad59] bg-[#fffaf0] dark:border-[#816f37] dark:bg-[#102423]"
                 } ${current ? "cursor-default" : "cursor-pointer"}`}
               >
                 <div className="flex items-center justify-between gap-3 sm:gap-4">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0f5f4a] text-xs font-black text-white sm:h-10 sm:w-10 sm:text-sm">
-                    {current ? "✓" : index + 1}
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0f5f4a] text-xs font-black text-white dark:bg-[#ffd56f] dark:text-[#102423] sm:h-10 sm:w-10 sm:text-sm">
+                    {current ? "OK" : index + 1}
                   </span>
                   <span
                     dir="rtl"
-                    className="flex-1 text-right text-lg font-bold leading-relaxed text-[#142820] sm:text-2xl md:text-[1.65rem]"
+                    className="flex-1 text-right text-lg font-bold leading-relaxed text-[#142820] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.65rem]"
                   >
                     {current ? current.text : "Pilih ayat dari bawah"}
                   </span>
@@ -265,28 +284,30 @@ export function SurahGame({ surah }: { surah: Surah }) {
           })}
         </div>
 
-        <aside className="h-fit rounded-2xl border border-[#ddcc90] bg-white p-5 shadow-sm">
+        <aside className="h-fit rounded-2xl border border-[#ddcc90] bg-white p-5 shadow-sm dark:border-[#376b60] dark:bg-[#102423]">
           <h2 className="text-base font-black sm:text-lg">Misi Hari Ini</h2>
-          <div className="mt-4 grid gap-3 text-sm font-semibold text-[#37574c]">
-            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3">
+          <div className="mt-4 grid gap-3 text-sm font-semibold text-[#37574c] dark:text-[#d9efe5]">
+            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
               <span>Terisi</span>
               <span>
                 {placed.filter(Boolean).length}/{surah.total_verses}
               </span>
             </div>
-            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3">
+            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
               <span>Kombo</span>
               <span>{streak}x</span>
             </div>
-            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3">
+            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
               <span>Salah</span>
               <span>{mistakes}</span>
             </div>
           </div>
           {isComplete ? (
-            <div className="mt-5 rounded-2xl bg-[#e3f7df] p-4 text-center">
-              <p className="text-2xl font-black text-[#177245]">Selesai!</p>
-              <p className="mt-1 text-sm font-semibold text-[#315947]">
+            <div className="mt-5 rounded-2xl bg-[#e3f7df] p-4 text-center dark:bg-[#143d33]">
+              <p className="text-2xl font-black text-[#177245] dark:text-[#8ce5c6]">
+                Selesai!
+              </p>
+              <p className="mt-1 text-sm font-semibold text-[#315947] dark:text-[#c8e8db]">
                 MasyaAllah, skor kamu tersimpan di browser ini.
               </p>
             </div>
@@ -294,35 +315,46 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </aside>
       </section>
 
-      <section className="fixed inset-x-0 bottom-0 h-[32svh] overflow-hidden border-t border-[#d8c173] bg-[#fffaf0]/95 p-3 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur sm:h-auto sm:max-h-[42svh] sm:p-4">
+      <section className="fixed inset-x-0 bottom-0 h-[34svh] overflow-hidden border-t border-[#d8c173] bg-[#fffaf0]/95 p-3 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur dark:border-[#376b60] dark:bg-[#071b1c]/95 sm:h-auto sm:max-h-[42svh] sm:p-4">
         <div className="mx-auto flex h-full max-w-6xl flex-col">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="text-sm font-black text-[#14342b]">
+            <p className="text-sm font-black text-[#14342b] dark:text-[#eff8ed]">
               Pilihan Ayat {selected ? "- Ayat dipilih" : ""}
             </p>
-            <p className="hidden text-xs font-bold text-[#6c7055] sm:block">
+            <p className="hidden text-xs font-bold text-[#6c7055] dark:text-[#a6c3b7] sm:block">
               Klik pilihan, lalu klik kotak kosong yang sesuai
             </p>
           </div>
           <div className="flex flex-1 gap-3 overflow-x-auto pb-2">
             {choices.map((verse) => (
-              <button
+              <div
                 key={verse.id}
-                type="button"
-                onClick={() => pickVerse(verse)}
-                className={`h-full min-w-[82vw] overflow-y-auto rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:max-h-[30svh] sm:min-w-72 sm:p-4 md:min-w-80 ${
+                className={`flex h-full min-w-[82vw] flex-col justify-between gap-3 overflow-y-auto rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:max-h-[30svh] sm:min-w-72 sm:p-4 md:min-w-80 ${
                   selected?.id === verse.id
-                    ? "border-[#0f5f4a] bg-[#d9f3dc]"
-                    : "border-[#dccb91] bg-white"
+                    ? "border-[#0f5f4a] bg-[#d9f3dc] dark:bg-[#143d33]"
+                    : "border-[#dccb91] bg-white dark:border-[#376b60] dark:bg-[#102423]"
                 }`}
               >
-                <span
+                <span className="text-left">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      playVerseAudio(verse);
+                    }}
+                    className="inline-flex rounded-full bg-[#0f5f4a] px-3 py-2 text-[11px] font-black text-white dark:bg-[#ffd56f] dark:text-[#102423]"
+                  >
+                    {playingVerseId === verse.id ? "Memutar" : "Dengar"}
+                  </button>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => pickVerse(verse)}
                   dir="rtl"
-                  className="block text-lg font-bold leading-relaxed text-[#1d2f28] sm:text-2xl md:text-[1.55rem]"
+                  className="block flex-1 text-right text-lg font-bold leading-relaxed text-[#1d2f28] dark:text-[#f2fbf7] sm:text-2xl md:text-[1.55rem]"
                 >
                   {verse.text}
-                </span>
-              </button>
+                </button>
+              </div>
             ))}
           </div>
         </div>

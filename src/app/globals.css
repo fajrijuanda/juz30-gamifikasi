@@ -5,6 +5,11 @@
   --foreground: #14342b;
 }
 
+:root.dark {
+  --background: #071b1c;
+  --foreground: #eff8ed;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -21,4 +26,53 @@ body {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+.star-field {
+  position: relative;
+  isolation: isolate;
+}
+
+.star-field::before,
+.star-field::after {
+  animation: star-twinkle 3.8s ease-in-out infinite alternate;
+  background-image:
+    radial-gradient(circle, rgba(255, 244, 193, 0.95) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 1px, transparent 1.5px);
+  background-position:
+    8% 18%,
+    24% 68%;
+  background-size:
+    120px 120px,
+    170px 170px;
+  content: "";
+  inset: 0;
+  opacity: 0.55;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+}
+
+.star-field::after {
+  animation-delay: 1.2s;
+  animation-duration: 5.4s;
+  background-position:
+    52% 22%,
+    88% 62%;
+  background-size:
+    150px 150px,
+    220px 220px;
+  opacity: 0.35;
+}
+
+@keyframes star-twinkle {
+  from {
+    opacity: 0.18;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0.72;
+    transform: translateY(-4px);
+  }
 }

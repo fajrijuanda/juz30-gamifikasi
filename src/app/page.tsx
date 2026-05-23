@@ -1,24 +1,28 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { getSurahLevel, juz30Surahs } from "@/lib/juz30";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f6f0dd] text-[#14342b]">
+    <main className="min-h-screen bg-[#f6f0dd] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed]">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b5148]/95 text-white shadow-lg shadow-black/10 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-8">
           <Link href="/" className="text-base font-black sm:text-lg">
             Juz 30 Quest
           </Link>
-          <a
-            href="#daftar-surat"
-            className="rounded-full bg-white px-4 py-2 text-xs font-black text-[#0f5f4a] transition hover:bg-[#ffd56f]"
-          >
-            Daftar Surat
-          </a>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <a
+              href="#daftar-surat"
+              className="hidden rounded-full bg-white px-4 py-2 text-xs font-black text-[#0f5f4a] transition hover:bg-[#ffd56f] sm:inline-flex"
+            >
+              Daftar Surat
+            </a>
+          </div>
         </div>
       </header>
 
-      <section className="relative overflow-hidden bg-[#0f5f4a] text-white">
+      <section className="star-field relative overflow-hidden bg-[#0f5f4a] text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_25%,rgba(255,213,111,0.35),transparent_26%),radial-gradient(circle_at_85%_10%,rgba(126,219,191,0.28),transparent_22%),linear-gradient(135deg,#0f5f4a,#0b3d4d)]" />
         <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-8 sm:py-12 md:grid-cols-[1.05fr_0.95fr] md:items-center lg:py-14">
           <div>
@@ -50,7 +54,7 @@ export default function Home() {
               {["78", "93", "100", "108", "112", "114"].map((item) => (
                 <div
                   key={item}
-                  className="flex aspect-square items-center justify-center rounded-2xl bg-white text-lg font-black text-[#0f5f4a] shadow-lg sm:text-xl md:text-2xl"
+                  className="flex aspect-square items-center justify-center rounded-2xl bg-white text-lg font-black text-[#0f5f4a] shadow-lg dark:bg-[#f9efd0] sm:text-xl md:text-2xl"
                 >
                   {item}
                 </div>
@@ -66,12 +70,12 @@ export default function Home() {
       >
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0f7c68]">
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0f7c68] dark:text-[#83e8c7]">
               Pilih Surat
             </p>
             <h2 className="mt-1 text-2xl font-black sm:text-3xl">Daftar Juz 30</h2>
           </div>
-          <p className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#526057] shadow-sm">
+          <p className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#526057] shadow-sm dark:bg-[#102e2d] dark:text-[#d9efe5]">
             {juz30Surahs.length} surat tersedia
           </p>
         </div>
@@ -81,29 +85,29 @@ export default function Home() {
             <Link
               key={surah.id}
               href={`/surah/${surah.id}`}
-              className="group rounded-2xl border border-[#dccb91] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#0f7c68] hover:shadow-xl"
+              className="group rounded-2xl border border-[#dccb91] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#0f7c68] hover:shadow-xl dark:border-[#376b60] dark:bg-[#102423]"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f5f4a] text-sm font-black text-white">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f5f4a] text-sm font-black text-white dark:bg-[#ffd56f] dark:text-[#102423]">
                     {surah.id}
                   </span>
                   <h3 className="mt-4 text-xl font-black sm:text-2xl">
                     {surah.transliteration}
                   </h3>
-                  <p className="mt-1 text-sm font-bold text-[#637167]">
+                  <p className="mt-1 text-sm font-bold text-[#637167] dark:text-[#adc5b9]">
                     {surah.translation}
                   </p>
                 </div>
-                <p dir="rtl" className="text-2xl font-black text-[#0f7c68] sm:text-3xl">
+                <p dir="rtl" className="text-2xl font-black text-[#0f7c68] dark:text-[#7be0bf] sm:text-3xl">
                   {surah.name}
                 </p>
               </div>
               <div className="mt-5 flex items-center justify-between gap-3 text-sm font-black">
-                <span className="rounded-full bg-[#f7f1df] px-3 py-2 text-[#675a30]">
+                <span className="rounded-full bg-[#f7f1df] px-3 py-2 text-[#675a30] dark:bg-[#1b3734] dark:text-[#f3daa0]">
                   {surah.total_verses} ayat
                 </span>
-                <span className="rounded-full bg-[#d9f3dc] px-3 py-2 text-[#17603f]">
+                <span className="rounded-full bg-[#d9f3dc] px-3 py-2 text-[#17603f] dark:bg-[#174038] dark:text-[#8ce5c6]">
                   {getSurahLevel(surah.total_verses)}
                 </span>
               </div>

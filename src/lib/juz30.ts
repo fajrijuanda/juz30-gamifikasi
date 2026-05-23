@@ -32,3 +32,10 @@ export function getSurahLevel(totalVerses: number) {
   if (totalVerses <= 15) return "Seru";
   return "Tantangan";
 }
+
+export function getVerseAudioUrl(surahId: number, verseId: number) {
+  const chapter = surahId.toString().padStart(3, "0");
+  const verse = verseId.toString().padStart(3, "0");
+
+  return `https://verses.quran.com/Alafasy/mp3/${chapter}${verse}.mp3`;
+}
