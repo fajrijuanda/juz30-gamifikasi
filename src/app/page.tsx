@@ -4,9 +4,23 @@ import { getSurahLevel, juz30Surahs } from "@/lib/juz30";
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#f6f0dd] text-[#14342b]">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b5148]/95 text-white shadow-lg shadow-black/10 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8">
+          <Link href="/" className="text-base font-black sm:text-lg">
+            Juz 30 Quest
+          </Link>
+          <a
+            href="#daftar-surat"
+            className="rounded-full bg-white px-4 py-2 text-xs font-black text-[#0f5f4a] transition hover:bg-[#ffd56f]"
+          >
+            Daftar Surat
+          </a>
+        </div>
+      </header>
+
       <section className="relative overflow-hidden bg-[#0f5f4a] text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_25%,rgba(255,213,111,0.35),transparent_26%),radial-gradient(circle_at_85%_10%,rgba(126,219,191,0.28),transparent_22%),linear-gradient(135deg,#0f5f4a,#0b3d4d)]" />
-        <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-8 sm:py-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+        <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-8 sm:py-12 md:grid-cols-[1.05fr_0.95fr] md:items-center lg:py-14">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ffd56f] sm:text-sm sm:tracking-[0.26em]">
               Hafalan Jadi Petualangan
@@ -31,8 +45,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative min-h-48 rounded-3xl border border-white/20 bg-white/10 p-5 shadow-2xl shadow-black/20 backdrop-blur sm:min-h-56 sm:rounded-[2rem] sm:p-6">
-            <div className="absolute bottom-6 left-5 right-5 grid grid-cols-3 gap-2 sm:bottom-7 sm:left-7 sm:right-7 sm:gap-3">
+          <div className="w-full max-w-md justify-self-center rounded-3xl border border-white/20 bg-white/10 p-5 shadow-2xl shadow-black/20 backdrop-blur sm:rounded-[2rem] sm:p-6 md:max-w-lg">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               {["78", "93", "100", "108", "112", "114"].map((item) => (
                 <div
                   key={item}
@@ -46,7 +60,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+      <section
+        id="daftar-surat"
+        className="mx-auto max-w-6xl scroll-mt-20 px-5 py-8 sm:px-8"
+      >
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0f7c68]">
