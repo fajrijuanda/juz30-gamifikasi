@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -59,18 +59,15 @@ function formatTime(totalSeconds: number) {
   return `${minutes}:${seconds}`;
 }
 
-function calculateScore({
-  correct,
-  streak,
-  mistakes,
-  seconds,
-}: {
-  correct: number;
-  streak: number;
-  mistakes: number;
-  seconds: number;
-}) {
-  return Math.max(0, correct * 100 + streak * 10 - mistakes * 15 - seconds);
+function getTimeBonus(totalSeconds: number, totalVerses: number) {
+  const secondsPerVerse = totalSeconds / totalVerses;
+
+  if (secondsPerVerse <= 5) return { bonus: 500, label: "Kilat ⚡" };
+  if (secondsPerVerse <= 10) return { bonus: 300, label: "Super Cepat 🔥" };
+  if (secondsPerVerse <= 15) return { bonus: 200, label: "Cepat 💨" };
+  if (secondsPerVerse <= 25) return { bonus: 100, label: "Bagus 👍" };
+  if (secondsPerVerse <= 40) return { bonus: 50, label: "Lumayan 😊" };
+  return { bonus: 0, label: "Santai 🐢" };
 }
 
 function getArabicTextStyle(text: string, placement: "choice" | "slot"): CSSProperties {
@@ -149,10 +146,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
     startY: 0,
   });
 
-  const score = useMemo(() => {
-    const correct = placed.filter(Boolean).length;
-    return calculateScore({ correct, streak, mistakes, seconds });
-  }, [mistakes, placed, seconds, streak]);
+  const [score, setScore] = useState(0);
+  const [timeBonus, setTimeBonus] = useState<{ bonus: number; label: string } | null>(null);
 
   const isComplete = placed.length > 0 && placed.every(Boolean);
   const isGameOver = isComplete || isFinished;
@@ -233,6 +228,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
     setSeconds(0);
     setMistakes(0);
     setStreak(0);
+    setScore(0);
+    setTimeBonus(null);
     setIsRunning(true);
   }
 
@@ -261,6 +258,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
       const nextStreak = streak + 1;
       const nextCorrect = placed.filter(Boolean).length + 1;
       const isFinishing = nextCorrect === surah.verses.length;
+      const pointsEarned = 100 + (nextStreak - 1) * 10;
+      let newScore = score + pointsEarned;
 
       setPlaced((current) => {
         const next = [...current];
@@ -280,18 +279,16 @@ export function SurahGame({ surah }: { surah: Surah }) {
       setStreak(nextStreak);
 
       if (isFinishing) {
-        const finalScore = calculateScore({
-          correct: nextCorrect,
-          streak: nextStreak,
-          mistakes,
-          seconds,
-        });
+        const tb = getTimeBonus(seconds, surah.verses.length);
+        newScore += tb.bonus;
+        setTimeBonus(tb);
         setIsRunning(false);
-        saveProgress(finalScore);
+        saveProgress(newScore);
         setIsFinished(true);
         setIsGameMenuOpen(true);
       }
 
+      setScore(newScore);
       return;
     }
 
@@ -507,11 +504,33 @@ export function SurahGame({ surah }: { surah: Surah }) {
               {isGameOver ? "Quest Selesai" : "Quest Dijeda"}
             </h2>
             <p className="mt-2 text-sm font-semibold text-[#637167] dark:text-[#adc5b9]">
-              Skor kamu saat ini
+              {isGameOver ? "Skor akhir kamu" : "Skor kamu saat ini"}
             </p>
             <p className="mt-1 text-5xl font-black text-[#0f7c68] dark:text-[#ffd56f]">
               {score}
             </p>
+
+            {isGameOver && timeBonus ? (
+              <div className="mt-4 grid gap-2 rounded-2xl bg-[#f7f1df] p-3 text-left text-sm dark:bg-[#1b3734]">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-[#637167] dark:text-[#adc5b9]">Skor Susun</span>
+                  <span className="font-black text-[#0f7c68] dark:text-[#83e8c7]">
+                    {score - timeBonus.bonus}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-2 border-t border-[#e8ddb8] pt-2 dark:border-[#2a524a]">
+                  <span className="font-bold text-[#637167] dark:text-[#adc5b9]">
+                    Bonus Waktu
+                  </span>
+                  <span className="font-black text-[#0f7c68] dark:text-[#83e8c7]">
+                    +{timeBonus.bonus}
+                  </span>
+                </div>
+                <p className="mt-1 text-center text-xs font-black text-[#0f7c68] dark:text-[#ffd56f]">
+                  {timeBonus.label} — {formatTime(seconds)}
+                </p>
+              </div>
+            ) : null}
 
             <div className="mt-6 grid gap-3">
               {!isGameOver ? (
