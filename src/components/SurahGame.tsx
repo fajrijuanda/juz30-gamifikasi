@@ -203,7 +203,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(32svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 lg:grid-cols-[1fr_320px]">
+      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(32svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 md:gap-6 lg:grid-cols-[1fr_320px]">
         <div className="grid gap-3">
           {surah.verses.map((verse, index) => {
             const current = placed[index];
@@ -282,7 +282,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 key={verse.id}
                 type="button"
                 onClick={() => pickVerse(verse)}
-                className={`h-full min-w-[82vw] overflow-y-auto rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:max-h-[30svh] sm:min-w-72 sm:p-4 ${
+                className={`h-full min-w-[82vw] overflow-y-auto rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:max-h-[30svh] sm:min-w-72 sm:p-4 md:min-w-80 ${
                   selected?.id === verse.id
                     ? "border-[#0f5f4a] bg-[#d9f3dc]"
                     : "border-[#dccb91] bg-white"
@@ -293,7 +293,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 </span>
                 <span
                   dir="rtl"
-                  className="block text-xl font-bold leading-relaxed text-[#1d2f28] sm:text-2xl"
+                  className="block text-xl font-bold leading-relaxed text-[#1d2f28] sm:text-2xl md:text-[1.7rem]"
                 >
                   {verse.text}
                 </span>
