@@ -20,7 +20,13 @@ import {
 import { showAppLoading } from "@/components/AppLoadingScreen";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Surah, Verse } from "@/lib/juz30";
-import { getVerseAudioUrl } from "@/lib/juz30";
+import {
+  audioReciters,
+  defaultReciterId,
+  getVerseAudioUrl,
+  reciterStorageKey,
+  type AudioReciterId,
+} from "@/lib/juz30";
 
 type PlacedVerse = Verse | null;
 
@@ -38,6 +44,10 @@ const emptyProgress: Progress = {
 
 function shuffle<T>(items: T[]) {
   return [...items].sort(() => Math.random() - 0.5);
+}
+
+function isAudioReciterId(value: string | null): value is AudioReciterId {
+  return audioReciters.some((reciter) => reciter.id === value);
 }
 
 function formatTime(totalSeconds: number) {
@@ -113,6 +123,12 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [streak, setStreak] = useState(0);
   const [slotFeedback, setSlotFeedback] = useState<SlotFeedback[]>([]);
   const [playingVerseId, setPlayingVerseId] = useState<number | null>(null);
+  const [selectedReciter, setSelectedReciter] = useState<AudioReciterId>(() => {
+    if (typeof window === "undefined") return defaultReciterId;
+
+    const saved = window.localStorage.getItem(reciterStorageKey);
+    return isAudioReciterId(saved) ? saved : defaultReciterId;
+  });
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [progress, setProgress] = useState<Progress>(() => {
     if (typeof window === "undefined") return emptyProgress;
@@ -163,6 +179,18 @@ export function SurahGame({ surah }: { surah: Surah }) {
       window.removeEventListener("resize", updateHeaderOffset);
       document.documentElement.style.removeProperty("--quest-header-height");
     };
+  }, []);
+
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== reciterStorageKey) return;
+      if (isAudioReciterId(event.newValue)) {
+        setSelectedReciter(event.newValue);
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
@@ -300,7 +328,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
     audio.pause();
     audio.currentTime = 0;
-    audio.src = getVerseAudioUrl(surah.id, verse.id);
+    audio.src = getVerseAudioUrl(surah.id, verse.id, selectedReciter);
     audio.onended = () => setPlayingVerseId(null);
     audio.onerror = () => setPlayingVerseId(null);
     setPlayingVerseId(verse.id);

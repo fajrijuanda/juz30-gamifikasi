@@ -6,11 +6,13 @@ import {
   Gamepad2,
   ListChecks,
   Lock,
+  Settings2,
   Sparkles,
   Star,
 } from "lucide-react";
 import { showAppLoading } from "@/components/AppLoadingScreen";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { VoiceSettings } from "@/components/VoiceSettings";
 import { getSurahLevel, juz30Surahs } from "@/lib/juz30";
 
 export default function Home() {
@@ -26,6 +28,13 @@ export default function Home() {
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <a
+              href="#pengaturan"
+              className="hidden items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-black text-white transition hover:bg-white/25 sm:inline-flex"
+            >
+              <Settings2 className="h-4 w-4" aria-hidden="true" />
+              Setting
+            </a>
             <a
               href="#daftar-surat"
               className="hidden items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#0f5f4a] transition hover:bg-[#ffd56f] sm:inline-flex"
@@ -111,6 +120,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <VoiceSettings />
 
       <section
         id="daftar-surat"
