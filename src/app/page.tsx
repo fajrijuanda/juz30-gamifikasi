@@ -6,7 +6,6 @@ import {
   Gamepad2,
   ListChecks,
   Lock,
-  Settings2,
   Sparkles,
   Star,
   Trophy,
@@ -27,15 +26,9 @@ export default function Home() {
               Juz 30 Quest
             </span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <ThemeToggle />
-            <a
-              href="#pengaturan"
-              className="hidden items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-black text-white transition hover:bg-white/25 sm:inline-flex"
-            >
-              <Settings2 className="h-4 w-4" aria-hidden="true" />
-              Setting
-            </a>
+            <VoiceSettings />
             <Link
               href="/leaderboard"
               onClick={showAppLoading}
@@ -137,8 +130,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <VoiceSettings />
 
       <section
         id="daftar-surat"
