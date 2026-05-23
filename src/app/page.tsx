@@ -9,6 +9,7 @@ import {
   Settings2,
   Sparkles,
   Star,
+  Trophy,
 } from "lucide-react";
 import { showAppLoading } from "@/components/AppLoadingScreen";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -35,6 +36,14 @@ export default function Home() {
               <Settings2 className="h-4 w-4" aria-hidden="true" />
               Setting
             </a>
+            <Link
+              href="/leaderboard"
+              onClick={showAppLoading}
+              className="inline-flex items-center gap-2 rounded-full bg-[#ffd56f] px-4 py-2 text-xs font-black text-[#2d250d] transition hover:bg-white"
+            >
+              <Trophy className="h-4 w-4" aria-hidden="true" />
+              Leaderboard
+            </Link>
             <a
               href="#daftar-surat"
               className="hidden items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#0f5f4a] transition hover:bg-[#ffd56f] sm:inline-flex"
@@ -76,6 +85,14 @@ export default function Home() {
                 <Gamepad2 className="h-4 w-4" aria-hidden="true" />
                 Data Statis
               </span>
+              <Link
+                href="/leaderboard"
+                onClick={showAppLoading}
+                className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-white transition hover:bg-white hover:text-[#0f5f4a]"
+              >
+                <Trophy className="h-4 w-4" aria-hidden="true" />
+                Leaderboard
+              </Link>
             </div>
           </div>
 
