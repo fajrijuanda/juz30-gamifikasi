@@ -68,6 +68,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [selected, setSelected] = useState<Verse | null>(null);
   const [draggingVerseId, setDraggingVerseId] = useState<number | null>(null);
   const [isPickerPanning, setIsPickerPanning] = useState(false);
+  const [isMissionOpen, setIsMissionOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(true);
   const [seconds, setSeconds] = useState(0);
   const [mistakes, setMistakes] = useState(0);
@@ -278,7 +279,15 @@ export function SurahGame({ surah }: { surah: Surah }) {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:flex">
+            <div className="grid grid-cols-3 gap-2 sm:flex">
+              <button
+                type="button"
+                onClick={() => setIsMissionOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white/15 px-4 py-3 text-sm font-black text-white ring-1 ring-white/20 transition hover:scale-105 hover:bg-white/20 sm:px-5"
+              >
+                <Sparkles className="h-4 w-4 text-[#ffd56f]" aria-hidden="true" />
+                Misi
+              </button>
               <button
                 type="button"
                 onClick={() => setIsRunning((current) => !current)}
@@ -304,7 +313,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(34svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 md:gap-6 lg:grid-cols-[1fr_320px]">
+      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(34svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 md:gap-6">
         <div className="grid gap-3">
           {surah.verses.map((verse, index) => {
             const current = placed[index];
@@ -352,48 +361,73 @@ export function SurahGame({ surah }: { surah: Surah }) {
           })}
         </div>
 
-        <aside className="sticky top-60 h-fit rounded-2xl border border-[#ddcc90] bg-white p-5 shadow-sm dark:border-[#376b60] dark:bg-[#102423] lg:top-64">
-          <h2 className="inline-flex items-center gap-2 text-base font-black sm:text-lg">
-            <Sparkles className="h-5 w-5 text-[#0f7c68] dark:text-[#ffd56f]" aria-hidden="true" />
-            Misi Hari Ini
-          </h2>
-          <div className="mt-4 grid gap-3 text-sm font-semibold text-[#37574c] dark:text-[#d9efe5]">
-            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
-              <span className="inline-flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                Terisi
-              </span>
-              <span>
-                {placed.filter(Boolean).length}/{surah.total_verses}
-              </span>
-            </div>
-            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
-              <span className="inline-flex items-center gap-2">
-                <Flame className="h-4 w-4" aria-hidden="true" />
-                Kombo
-              </span>
-              <span>{streak}x</span>
-            </div>
-            <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
-              <span className="inline-flex items-center gap-2">
-                <XCircle className="h-4 w-4" aria-hidden="true" />
-                Salah
-              </span>
-              <span>{mistakes}</span>
-            </div>
-          </div>
-          {isComplete ? (
-            <div className="mt-5 rounded-2xl bg-[#e3f7df] p-4 text-center dark:bg-[#143d33]">
-              <p className="text-2xl font-black text-[#177245] dark:text-[#8ce5c6]">
-                Selesai!
-              </p>
-              <p className="mt-1 text-sm font-semibold text-[#315947] dark:text-[#c8e8db]">
-                MasyaAllah, skor kamu tersimpan di browser ini.
-              </p>
-            </div>
-          ) : null}
-        </aside>
       </section>
+
+      {isMissionOpen ? (
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mission-title"
+          onClick={() => setIsMissionOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl border border-[#ddcc90] bg-white p-5 shadow-2xl shadow-black/25 dark:border-[#376b60] dark:bg-[#102423]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="mission-title" className="inline-flex items-center gap-2 text-lg font-black">
+                <Sparkles className="h-5 w-5 text-[#0f7c68] dark:text-[#ffd56f]" aria-hidden="true" />
+                Misi Hari Ini
+              </h2>
+              <button
+                type="button"
+                onClick={() => setIsMissionOpen(false)}
+                className="rounded-full bg-[#f7f1df] px-3 py-2 text-xs font-black text-[#14342b] dark:bg-[#1b3734] dark:text-[#eff8ed]"
+              >
+                Tutup
+              </button>
+            </div>
+
+            <div className="mt-5 grid gap-3 text-sm font-semibold text-[#37574c] dark:text-[#d9efe5]">
+              <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
+                <span className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                  Terisi
+                </span>
+                <span>
+                  {placed.filter(Boolean).length}/{surah.total_verses}
+                </span>
+              </div>
+              <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
+                <span className="inline-flex items-center gap-2">
+                  <Flame className="h-4 w-4" aria-hidden="true" />
+                  Kombo
+                </span>
+                <span>{streak}x</span>
+              </div>
+              <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
+                <span className="inline-flex items-center gap-2">
+                  <XCircle className="h-4 w-4" aria-hidden="true" />
+                  Salah
+                </span>
+                <span>{mistakes}</span>
+              </div>
+            </div>
+
+            {isComplete ? (
+              <div className="mt-5 rounded-2xl bg-[#e3f7df] p-4 text-center dark:bg-[#143d33]">
+                <p className="text-2xl font-black text-[#177245] dark:text-[#8ce5c6]">
+                  Selesai!
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[#315947] dark:text-[#c8e8db]">
+                  MasyaAllah, skor kamu tersimpan di browser ini.
+                </p>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       <section className="fixed inset-x-0 bottom-0 h-[34svh] overflow-hidden border-t border-[#d8c173] bg-[#fffaf0]/95 p-3 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur dark:border-[#376b60] dark:bg-[#071b1c]/95 sm:h-auto sm:max-h-[42svh] sm:p-4">
         <div className="mx-auto flex h-full max-w-6xl flex-col">
