@@ -66,6 +66,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [placed, setPlaced] = useState<PlacedVerse[]>([]);
   const [selected, setSelected] = useState<Verse | null>(null);
   const [draggingVerseId, setDraggingVerseId] = useState<number | null>(null);
+  const [isPickerPanning, setIsPickerPanning] = useState(false);
   const [isRunning, setIsRunning] = useState(true);
   const [seconds, setSeconds] = useState(0);
   const [mistakes, setMistakes] = useState(0);
@@ -80,6 +81,12 @@ export function SurahGame({ surah }: { surah: Surah }) {
     return raw ? (JSON.parse(raw) as Progress) : emptyProgress;
   });
   const initialized = useRef(false);
+  const pickerRef = useRef<HTMLDivElement | null>(null);
+  const panRef = useRef({
+    pointerId: -1,
+    startY: 0,
+    scrollTop: 0,
+  });
 
   const score = useMemo(() => {
     const correct = placed.filter(Boolean).length;
@@ -397,11 +404,47 @@ export function SurahGame({ surah }: { surah: Surah }) {
               Klik pilihan, lalu klik kotak kosong yang sesuai
             </p>
           </div>
-          <div className="flex flex-1 gap-3 overflow-x-auto pb-2">
+          <div
+            ref={pickerRef}
+            onPointerDown={(event) => {
+              if (event.pointerType === "mouse" && event.button !== 0) return;
+
+              const target = event.target as HTMLElement;
+              if (target.closest("[data-no-pan]")) return;
+
+              const picker = pickerRef.current;
+              if (!picker) return;
+
+              panRef.current = {
+                pointerId: event.pointerId,
+                startY: event.clientY,
+                scrollTop: picker.scrollTop,
+              };
+              setIsPickerPanning(true);
+              picker.setPointerCapture(event.pointerId);
+            }}
+            onPointerMove={(event) => {
+              if (!isPickerPanning || panRef.current.pointerId !== event.pointerId) {
+                return;
+              }
+
+              const picker = pickerRef.current;
+              if (!picker) return;
+              picker.scrollTop = panRef.current.scrollTop - (event.clientY - panRef.current.startY);
+            }}
+            onPointerUp={(event) => {
+              if (panRef.current.pointerId !== event.pointerId) return;
+              setIsPickerPanning(false);
+            }}
+            onPointerCancel={() => setIsPickerPanning(false)}
+            className={`grid flex-1 gap-3 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+              isPickerPanning ? "cursor-grabbing select-none" : "cursor-grab"
+            }`}
+          >
             {choices.map((verse) => (
               <div
                 key={verse.id}
-                className={`flex h-full min-w-[82vw] flex-col justify-between gap-3 overflow-y-auto rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:max-h-[30svh] sm:min-w-72 sm:p-4 md:min-w-80 ${
+                className={`flex min-h-32 flex-col justify-between gap-3 rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:p-4 ${
                   selected?.id === verse.id
                     ? "border-[#0f5f4a] bg-[#d9f3dc] dark:bg-[#143d33]"
                     : "border-[#dccb91] bg-white dark:border-[#376b60] dark:bg-[#102423]"
@@ -409,6 +452,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
               >
                 <span className="text-left">
                   <button
+                    data-no-pan
                     type="button"
                     onClick={() => {
                       playVerseAudio(verse);
@@ -421,6 +465,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 </span>
                 <button
                   type="button"
+                  data-no-pan
                   onClick={() => pickVerse(verse)}
                   draggable={isRunning && !isComplete}
                   onDragStart={(event) => {
