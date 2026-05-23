@@ -157,14 +157,14 @@ export function SurahGame({ surah }: { surah: Surah }) {
             >
               Kembali
             </Link>
-            <div className="flex flex-wrap gap-2 text-sm font-bold">
-              <span className="rounded-full bg-white/15 px-4 py-2">
+            <div className="grid w-full grid-cols-3 gap-2 text-center text-xs font-bold sm:w-auto sm:text-sm">
+              <span className="rounded-full bg-white/15 px-3 py-2 sm:px-4">
                 Waktu {formatTime(seconds)}
               </span>
-              <span className="rounded-full bg-[#ffd56f] px-4 py-2 text-[#163528]">
+              <span className="rounded-full bg-[#ffd56f] px-3 py-2 text-[#163528] sm:px-4">
                 Skor {score}
               </span>
-              <span className="rounded-full bg-white/15 px-4 py-2">
+              <span className="rounded-full bg-white/15 px-3 py-2 sm:px-4">
                 Terbaik {progress.bestScore}
               </span>
             </div>
@@ -178,23 +178,23 @@ export function SurahGame({ surah }: { surah: Surah }) {
               <h1 className="mt-2 text-4xl font-black sm:text-5xl">
                 {surah.transliteration}
               </h1>
-              <p className="mt-2 text-lg text-white/85">
-                {surah.translation} • {surah.total_verses} ayat
+              <p className="mt-2 text-base text-white/85 sm:text-lg">
+                {surah.translation} - {surah.total_verses} ayat
               </p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:flex">
               <button
                 type="button"
                 onClick={() => setIsRunning((current) => !current)}
-                className="rounded-full bg-white px-5 py-3 text-sm font-black text-[#0f5f4a] shadow-lg shadow-black/15 transition hover:scale-105"
+                className="rounded-full bg-white px-4 py-3 text-sm font-black text-[#0f5f4a] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
               >
                 {isRunning ? "Pause" : "Play"}
               </button>
               <button
                 type="button"
                 onClick={restart}
-                className="rounded-full bg-[#ffd56f] px-5 py-3 text-sm font-black text-[#2f2610] shadow-lg shadow-black/15 transition hover:scale-105"
+                className="rounded-full bg-[#ffd56f] px-4 py-3 text-sm font-black text-[#2f2610] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
               >
                 Acak Lagi
               </button>
@@ -203,7 +203,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-5 px-5 py-6 pb-52 sm:px-8 lg:grid-cols-[1fr_320px]">
+      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(32svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 lg:grid-cols-[1fr_320px]">
         <div className="grid gap-3">
           {surah.verses.map((verse, index) => {
             const current = placed[index];
@@ -213,7 +213,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 key={verse.id}
                 type="button"
                 onClick={() => placeVerse(index)}
-                className={`min-h-24 rounded-2xl border-2 p-4 text-left shadow-sm transition ${
+                className={`min-h-20 rounded-2xl border-2 p-3 text-left shadow-sm transition sm:min-h-24 sm:p-4 ${
                   current
                     ? "border-[#24a06d] bg-white"
                     : selected
@@ -221,13 +221,13 @@ export function SurahGame({ surah }: { surah: Surah }) {
                       : "border-dashed border-[#c6ad59] bg-[#fffaf0]"
                 }`}
               >
-                <div className="flex items-center justify-between gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0f5f4a] text-sm font-black text-white">
+                <div className="flex items-center justify-between gap-3 sm:gap-4">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0f5f4a] text-xs font-black text-white sm:h-10 sm:w-10 sm:text-sm">
                     {index + 1}
                   </span>
                   <span
                     dir="rtl"
-                    className="flex-1 text-right text-2xl font-bold leading-relaxed text-[#142820] sm:text-3xl"
+                    className="flex-1 text-right text-xl font-bold leading-relaxed text-[#142820] sm:text-3xl"
                   >
                     {current ? current.text : "Pilih ayat dari bawah"}
                   </span>
@@ -266,23 +266,23 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </aside>
       </section>
 
-      <section className="fixed inset-x-0 bottom-0 border-t border-[#d8c173] bg-[#fffaf0]/95 p-4 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur">
-        <div className="mx-auto max-w-6xl">
+      <section className="fixed inset-x-0 bottom-0 h-[32svh] overflow-hidden border-t border-[#d8c173] bg-[#fffaf0]/95 p-3 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur sm:h-auto sm:max-h-[42svh] sm:p-4">
+        <div className="mx-auto flex h-full max-w-6xl flex-col">
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-sm font-black text-[#14342b]">
-              Pilihan Ayat {selected ? `• Ayat ${selected.id} dipilih` : ""}
+              Pilihan Ayat {selected ? `- Ayat ${selected.id} dipilih` : ""}
             </p>
-            <p className="text-xs font-bold text-[#6c7055]">
+            <p className="hidden text-xs font-bold text-[#6c7055] sm:block">
               Klik pilihan, lalu klik kotak kosong yang sesuai
             </p>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2">
+          <div className="flex flex-1 gap-3 overflow-x-auto pb-2">
             {choices.map((verse) => (
               <button
                 key={verse.id}
                 type="button"
                 onClick={() => pickVerse(verse)}
-                className={`min-w-72 rounded-2xl border p-4 text-right shadow-sm transition hover:-translate-y-1 ${
+                className={`h-full min-w-[82vw] overflow-y-auto rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:max-h-[30svh] sm:min-w-72 sm:p-4 ${
                   selected?.id === verse.id
                     ? "border-[#0f5f4a] bg-[#d9f3dc]"
                     : "border-[#dccb91] bg-white"
@@ -293,7 +293,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 </span>
                 <span
                   dir="rtl"
-                  className="block text-2xl font-bold leading-relaxed text-[#1d2f28]"
+                  className="block text-xl font-bold leading-relaxed text-[#1d2f28] sm:text-2xl"
                 >
                   {verse.text}
                 </span>
