@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export type ThemeMode = "light" | "dark" | "system";
 
-const storageKey = "juz30-theme";
+const storageKey = "diniyyah-theme";
 
 function getStoredTheme(): ThemeMode {
   if (typeof window === "undefined") return "system";
@@ -28,7 +28,7 @@ function applyTheme(mode: ThemeMode) {
 export function setThemeMode(mode: ThemeMode) {
   window.localStorage.setItem(storageKey, mode);
   applyTheme(mode);
-  window.dispatchEvent(new CustomEvent<ThemeMode>("juz30-theme-change", { detail: mode }));
+  window.dispatchEvent(new CustomEvent<ThemeMode>("diniyyah-theme-change", { detail: mode }));
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

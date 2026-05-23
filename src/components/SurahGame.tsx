@@ -133,7 +133,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [progress, setProgress] = useState<Progress>(() => {
     if (typeof window === "undefined") return emptyProgress;
 
-    const raw = window.localStorage.getItem(`juz30-progress-${surah.id}`);
+    const raw = window.localStorage.getItem(`diniyyah-progress-${surah.id}`);
     return raw ? (JSON.parse(raw) as Progress) : emptyProgress;
   });
   const initialized = useRef(false);
@@ -219,10 +219,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
     };
 
     setProgress(nextProgress);
-    window.localStorage.setItem(
-      `juz30-progress-${surah.id}`,
-      JSON.stringify(nextProgress),
-    );
+    window.localStorage.setItem(`diniyyah-progress-${surah.id}`, JSON.stringify(nextProgress));
   }
 
   function restart() {
@@ -291,6 +288,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
         });
         setIsRunning(false);
         saveProgress(finalScore);
+        setIsFinished(true);
+        setIsGameMenuOpen(true);
       }
 
       return;
@@ -485,7 +484,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
       {isGameMenuOpen ? (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="game-menu-title"
@@ -559,7 +558,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
       {isMissionOpen ? (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="mission-title"

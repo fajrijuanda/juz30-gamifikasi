@@ -40,7 +40,7 @@ function getLeaderboardSnapshot() {
 
   return JSON.stringify(
     juz30Surahs.map((surah) => {
-      const raw = window.localStorage.getItem(`juz30-progress-${surah.id}`);
+      const raw = window.localStorage.getItem(`diniyyah-progress-${surah.id}`);
       let progress: LeaderboardProgress = {
         bestScore: 0,
         completed: false,
@@ -111,7 +111,7 @@ export function LeaderboardView() {
           <Link href="/" onClick={showAppLoading} className="text-base font-black sm:text-lg">
             <span className="inline-flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-[#ffd56f]" aria-hidden="true" />
-              Juz 30 Quest
+                Diniyyah Quest
             </span>
           </Link>
           <div className="flex items-center gap-2">

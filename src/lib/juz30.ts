@@ -17,7 +17,7 @@ export type Surah = {
   verses: Verse[];
 };
 
-export const reciterStorageKey = "juz30-reciter";
+export const reciterStorageKey = "diniyyah-reciter";
 
 export const audioReciters = [
   {

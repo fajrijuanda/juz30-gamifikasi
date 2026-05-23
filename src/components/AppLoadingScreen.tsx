@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { BookOpen, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-const loadingEventName = "juz30-loading-start";
+const loadingEventName = "diniyyah-loading-start";
 
 export function showAppLoading() {
   window.dispatchEvent(new Event(loadingEventName));
@@ -57,7 +57,7 @@ export function AppLoadingScreen() {
           <p className="text-sm font-black uppercase tracking-[0.24em] text-[#ffd56f]">
             Memulai Misi
           </p>
-          <h2 className="mt-2 text-3xl font-black">Juz 30 Quest</h2>
+          <h2 className="mt-2 text-3xl font-black">Diniyyah Quest</h2>
         </div>
 
         <div className="flex gap-2">

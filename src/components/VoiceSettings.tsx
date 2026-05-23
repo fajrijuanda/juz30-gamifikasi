@@ -83,7 +83,7 @@ export function VoiceSettings() {
 
       {isOpen ? (
         <div
-          className="fixed inset-0 z-[70] grid place-items-center bg-black/45 px-4 py-6 backdrop-blur-sm"
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="voice-settings-title"

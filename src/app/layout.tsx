@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Juz 30 Quest",
+  title: "Diniyyah Quest",
   description: "Game susun ayat Juz 30 untuk anak SD.",
 };
 

@@ -27,8 +27,8 @@ export function ThemeToggle() {
       setMode((event as CustomEvent<ThemeMode>).detail);
     };
 
-    window.addEventListener("juz30-theme-change", onThemeChange);
-    return () => window.removeEventListener("juz30-theme-change", onThemeChange);
+    window.addEventListener("diniyyah-theme-change", onThemeChange);
+    return () => window.removeEventListener("diniyyah-theme-change", onThemeChange);
   }, []);
 
   const CurrentIcon = icons[mode];

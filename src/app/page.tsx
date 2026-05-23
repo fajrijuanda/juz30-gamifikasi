@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { showAppLoading } from "@/components/AppLoadingScreen";
 import { SurahChoiceCard } from "@/components/SurahChoiceCard";
+import { SurahList } from "@/components/SurahList";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { VoiceSettings } from "@/components/VoiceSettings";
 import { juz30Surahs } from "@/lib/juz30";
@@ -24,7 +25,7 @@ export default function Home() {
           <Link href="/" className="text-base font-black sm:text-lg">
             <span className="inline-flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-[#ffd56f]" aria-hidden="true" />
-              Juz 30 Quest
+              Diniyyah Quest
             </span>
           </Link>
           <div className="flex flex-wrap items-center gap-2">
@@ -60,7 +61,7 @@ export default function Home() {
               </span>
             </p>
             <h1 className="mt-4 text-4xl font-black leading-tight sm:text-5xl md:text-6xl">
-              Juz 30 Quest
+              Diniyyah Quest
             </h1>
             <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/85 sm:text-base md:text-lg md:leading-8">
               Pilih surat, susun ayat yang diacak, kejar skor terbaik, dan
@@ -152,11 +153,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {juz30Surahs.map((surah) => (
-            <SurahChoiceCard key={surah.id} surah={surah} />
-          ))}
-        </div>
+        <SurahList surahs={juz30Surahs} />
       </section>
     </main>
   );
