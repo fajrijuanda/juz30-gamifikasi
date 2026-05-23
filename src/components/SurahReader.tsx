@@ -2,7 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, BookOpen, Gamepad2, Headphones, Square, Volume2 } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Gamepad2,
+  Headphones,
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+  Square,
+  Volume2,
+} from "lucide-react";
 import { showAppLoading } from "@/components/AppLoadingScreen";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { VoiceSettings } from "@/components/VoiceSettings";
@@ -40,8 +51,16 @@ export function SurahReader({ surah }: { surah: Surah }) {
     return isAudioReciterId(saved) ? saved : defaultReciterId;
   });
   const [playingVerseId, setPlayingVerseId] = useState<number | null>(null);
+  const [autoPlayIndex, setAutoPlayIndex] = useState(-1);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const verseRefs = useRef<(HTMLElement | null)[]>([]);
+  const selectedReciterRef = useRef(selectedReciter);
+  selectedReciterRef.current = selectedReciter;
 
+  const isAutoMode = autoPlayIndex >= 0;
+
+  // Sync reciter selection across tabs / settings modal
   useEffect(() => {
     const onStorage = (event: StorageEvent) => {
       if (event.key !== reciterStorageKey) return;
@@ -54,7 +73,85 @@ export function SurahReader({ surah }: { surah: Surah }) {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
+  // Stop audio on unmount (e.g. navigating away)
+  useEffect(() => {
+    return () => {
+      const audio = audioRef.current;
+      if (audio) {
+        audio.pause();
+        audio.onended = null;
+        audio.onerror = null;
+      }
+    };
+  }, []);
+
+  // Auto-play: load + play the verse at autoPlayIndex whenever it changes
+  useEffect(() => {
+    if (autoPlayIndex < 0) return;
+
+    const verse = surah.verses[autoPlayIndex];
+    if (!verse) {
+      setAutoPlayIndex(-1);
+      setIsAutoPlaying(false);
+      setPlayingVerseId(null);
+      return;
+    }
+
+    let cancelled = false;
+    const audio = audioRef.current ?? new Audio();
+    audioRef.current = audio;
+
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = getVerseAudioUrl(surah.id, verse.id, selectedReciterRef.current);
+
+    audio.onended = () => {
+      if (cancelled) return;
+      if (autoPlayIndex + 1 < surah.verses.length) {
+        setAutoPlayIndex(autoPlayIndex + 1);
+      } else {
+        setAutoPlayIndex(-1);
+        setIsAutoPlaying(false);
+        setPlayingVerseId(null);
+      }
+    };
+
+    audio.onerror = () => {
+      if (cancelled) return;
+      setAutoPlayIndex(-1);
+      setIsAutoPlaying(false);
+      setPlayingVerseId(null);
+    };
+
+    setPlayingVerseId(verse.id);
+    void audio.play().catch(() => {
+      if (cancelled) return;
+      setAutoPlayIndex(-1);
+      setIsAutoPlaying(false);
+      setPlayingVerseId(null);
+    });
+
+    // Scroll the active verse into view
+    const el = verseRefs.current[autoPlayIndex];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    return () => {
+      cancelled = true;
+      audio.onended = null;
+      audio.onerror = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlayIndex, surah]);
+
+  // --- Individual verse button (stops auto-play first) ---
   function playVerseAudio(verse: Verse) {
+    if (isAutoMode) {
+      setAutoPlayIndex(-1);
+      setIsAutoPlaying(false);
+    }
+
     const audio = audioRef.current ?? new Audio();
     audioRef.current = audio;
 
@@ -72,6 +169,68 @@ export function SurahReader({ surah }: { surah: Surah }) {
     audio.onerror = () => setPlayingVerseId(null);
     setPlayingVerseId(verse.id);
     void audio.play().catch(() => setPlayingVerseId(null));
+  }
+
+  // --- Transport controls ---
+  function togglePlayPause() {
+    if (!isAutoMode) {
+      // Start from the beginning
+      setAutoPlayIndex(0);
+      setIsAutoPlaying(true);
+    } else if (isAutoPlaying) {
+      // Pause
+      const audio = audioRef.current;
+      if (audio && !audio.paused) {
+        audio.pause();
+      }
+      setIsAutoPlaying(false);
+    } else {
+      // Resume
+      const audio = audioRef.current;
+      if (audio && audio.paused && audio.src) {
+        void audio.play().catch(() => {
+          setAutoPlayIndex(-1);
+          setIsAutoPlaying(false);
+          setPlayingVerseId(null);
+        });
+      }
+      setIsAutoPlaying(true);
+    }
+  }
+
+  function stopAutoPlay() {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.onended = null;
+      audio.onerror = null;
+    }
+    setAutoPlayIndex(-1);
+    setIsAutoPlaying(false);
+    setPlayingVerseId(null);
+  }
+
+  function prevAutoVerse() {
+    if (!isAutoMode) return;
+    const prevIndex = autoPlayIndex - 1;
+    if (prevIndex >= 0) {
+      setAutoPlayIndex(prevIndex);
+      setIsAutoPlaying(true);
+    }
+  }
+
+  function nextAutoVerse() {
+    if (!isAutoMode) {
+      setAutoPlayIndex(0);
+      setIsAutoPlaying(true);
+      return;
+    }
+    const nextIndex = autoPlayIndex + 1;
+    if (nextIndex < surah.verses.length) {
+      setAutoPlayIndex(nextIndex);
+      setIsAutoPlaying(true);
+    }
   }
 
   return (
@@ -97,6 +256,79 @@ export function SurahReader({ surah }: { surah: Surah }) {
               <Gamepad2 className="h-4 w-4" aria-hidden="true" />
               Game
             </Link>
+          </div>
+        </div>
+
+        {/* ── Audio Player Bar ── */}
+        <div className="border-t border-white/10 bg-[#094039]">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-2.5 sm:px-8">
+            {/* Transport buttons */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              <button
+                type="button"
+                onClick={prevAutoVerse}
+                disabled={!isAutoMode || autoPlayIndex <= 0}
+                className="grid h-9 w-9 place-items-center rounded-full text-white transition hover:bg-white/15 disabled:opacity-30 disabled:hover:bg-transparent sm:h-10 sm:w-10"
+                aria-label="Ayat sebelumnya"
+              >
+                <SkipBack className="h-4 w-4 fill-current" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={stopAutoPlay}
+                disabled={!isAutoMode}
+                className="grid h-9 w-9 place-items-center rounded-full text-white transition hover:bg-white/15 disabled:opacity-30 disabled:hover:bg-transparent sm:h-10 sm:w-10"
+                aria-label="Berhenti"
+              >
+                <Square className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={togglePlayPause}
+                className="grid h-11 w-11 place-items-center rounded-full bg-[#ffd56f] text-[#0b3d2e] shadow-lg transition hover:scale-110 hover:bg-white sm:h-12 sm:w-12"
+                aria-label={isAutoMode && isAutoPlaying ? "Jeda" : "Putar semua ayat"}
+              >
+                {isAutoMode && isAutoPlaying ? (
+                  <Pause className="h-5 w-5" aria-hidden="true" />
+                ) : (
+                  <Play className="h-5 w-5 translate-x-[1px]" aria-hidden="true" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={nextAutoVerse}
+                disabled={isAutoMode && autoPlayIndex >= surah.verses.length - 1}
+                className="grid h-9 w-9 place-items-center rounded-full text-white transition hover:bg-white/15 disabled:opacity-30 disabled:hover:bg-transparent sm:h-10 sm:w-10"
+                aria-label="Ayat berikutnya"
+              >
+                <SkipForward className="h-4 w-4 fill-current" aria-hidden="true" />
+              </button>
+            </div>
+
+            {/* Status indicator */}
+            <div className="flex items-center gap-2 text-xs font-bold sm:text-sm">
+              {isAutoMode ? (
+                <>
+                  <span className="rounded-full bg-white/15 px-3 py-1.5 sm:px-4">
+                    Ayat {autoPlayIndex + 1} / {surah.verses.length}
+                  </span>
+                  {isAutoPlaying ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1ac89b]/20 px-3 py-1.5 text-[#7be0bf]">
+                      <span className="h-2 w-2 animate-pulse rounded-full bg-[#1ac89b]" />
+                      Memutar
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-[#ffd56f]/20 px-3 py-1.5 text-[#ffd56f]">
+                      Dijeda
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span className="text-white/60">
+                  Tekan ▶ untuk memulai
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -142,40 +374,70 @@ export function SurahReader({ surah }: { surah: Surah }) {
         </div>
 
         <div className="grid gap-4">
-          {surah.verses.map((verse) => {
-            const isPlaying = playingVerseId === verse.id;
+          {surah.verses.map((verse, index) => {
+            const isVerseAudioPlaying = playingVerseId === verse.id;
+            const isActiveAutoPlay = isAutoMode && autoPlayIndex === index;
 
             return (
               <article
                 key={verse.id}
-                className="rounded-3xl border border-[#dccb91] bg-white p-4 shadow-sm dark:border-[#376b60] dark:bg-[#102423] sm:p-5"
+                ref={(el) => { verseRefs.current[index] = el; }}
+                className={`rounded-3xl border p-4 shadow-sm transition-all duration-300 sm:p-5 ${
+                  isActiveAutoPlay
+                    ? "border-[#0f7c68] bg-[#e3f7df] ring-2 ring-[#0f7c68]/30 dark:border-[#1ac89b] dark:bg-[#143d33] dark:ring-[#1ac89b]/25"
+                    : "border-[#dccb91] bg-white dark:border-[#376b60] dark:bg-[#102423]"
+                }`}
               >
                 <div className="mb-4 flex items-center justify-between gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-[#0f5f4a] text-sm font-black text-white dark:bg-[#ffd56f] dark:text-[#102423]">
-                    {verse.id}
+                  <span
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-black transition-colors ${
+                      isActiveAutoPlay
+                        ? "bg-[#0f7c68] text-white dark:bg-[#1ac89b] dark:text-[#071b1c]"
+                        : "bg-[#0f5f4a] text-white dark:bg-[#ffd56f] dark:text-[#102423]"
+                    }`}
+                  >
+                    {isActiveAutoPlay ? (
+                      <Volume2 className="h-4 w-4 animate-pulse" aria-hidden="true" />
+                    ) : (
+                      verse.id
+                    )}
                   </span>
                   <button
                     type="button"
                     onClick={() => playVerseAudio(verse)}
-                    className="inline-flex items-center gap-2 rounded-full bg-[#0f5f4a] px-4 py-2 text-xs font-black text-white transition hover:scale-105 dark:bg-[#ffd56f] dark:text-[#102423]"
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black transition hover:scale-105 ${
+                      isVerseAudioPlaying && !isAutoMode
+                        ? "bg-[#d64545] text-white"
+                        : "bg-[#0f5f4a] text-white dark:bg-[#ffd56f] dark:text-[#102423]"
+                    }`}
                   >
-                    {isPlaying ? (
+                    {isVerseAudioPlaying && !isAutoMode ? (
                       <Square className="h-4 w-4 fill-current" aria-hidden="true" />
                     ) : (
                       <Volume2 className="h-4 w-4" aria-hidden="true" />
                     )}
-                    {isPlaying ? "Stop" : "Dengar"}
+                    {isVerseAudioPlaying && !isAutoMode ? "Stop" : "Dengar"}
                   </button>
                 </div>
                 <p
                   dir="rtl"
                   style={getReaderArabicStyle(verse.text)}
-                  className="text-right font-normal text-[#142820] dark:text-[#f2fbf7]"
+                  className={`text-right font-normal transition-colors ${
+                    isActiveAutoPlay
+                      ? "text-[#0f5f4a] dark:text-[#7be0bf]"
+                      : "text-[#142820] dark:text-[#f2fbf7]"
+                  }`}
                 >
                   {verse.text}
                 </p>
                 {verse.translation ? (
-                  <p className="mt-4 rounded-2xl bg-[#f7f1df] px-4 py-3 text-sm font-semibold leading-6 text-[#526057] dark:bg-[#1b3734] dark:text-[#d9efe5]">
+                  <p
+                    className={`mt-4 rounded-2xl px-4 py-3 text-sm font-semibold leading-6 transition-colors ${
+                      isActiveAutoPlay
+                        ? "bg-[#c6edc0] text-[#1a4a30] dark:bg-[#1b4d3a] dark:text-[#c8e8db]"
+                        : "bg-[#f7f1df] text-[#526057] dark:bg-[#1b3734] dark:text-[#d9efe5]"
+                    }`}
+                  >
                     {verse.translation}
                   </p>
                 ) : null}
