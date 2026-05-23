@@ -172,13 +172,13 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
           <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#ffd56f]">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#ffd56f] sm:text-sm sm:tracking-[0.22em]">
                 Susun Ayat Juz 30
               </p>
-              <h1 className="mt-2 text-4xl font-black sm:text-5xl">
+              <h1 className="mt-2 text-3xl font-black sm:text-4xl md:text-5xl">
                 {surah.transliteration}
               </h1>
-              <p className="mt-2 text-base text-white/85 sm:text-lg">
+              <p className="mt-2 text-sm text-white/85 sm:text-base md:text-lg">
                 {surah.translation} - {surah.total_verses} ayat
               </p>
             </div>
@@ -227,7 +227,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                   </span>
                   <span
                     dir="rtl"
-                    className="flex-1 text-right text-xl font-bold leading-relaxed text-[#142820] sm:text-3xl"
+                    className="flex-1 text-right text-lg font-bold leading-relaxed text-[#142820] sm:text-2xl md:text-[1.65rem]"
                   >
                     {current ? current.text : "Pilih ayat dari bawah"}
                   </span>
@@ -238,7 +238,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
 
         <aside className="h-fit rounded-2xl border border-[#ddcc90] bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-black">Misi Hari Ini</h2>
+          <h2 className="text-base font-black sm:text-lg">Misi Hari Ini</h2>
           <div className="mt-4 grid gap-3 text-sm font-semibold text-[#37574c]">
             <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3">
               <span>Terisi</span>
@@ -293,7 +293,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 </span>
                 <span
                   dir="rtl"
-                  className="block text-xl font-bold leading-relaxed text-[#1d2f28] sm:text-2xl md:text-[1.7rem]"
+                  className="block text-lg font-bold leading-relaxed text-[#1d2f28] sm:text-2xl md:text-[1.55rem]"
                 >
                   {verse.text}
                 </span>

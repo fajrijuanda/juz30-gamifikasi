@@ -11,10 +11,10 @@ export default function Home() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ffd56f] sm:text-sm sm:tracking-[0.26em]">
               Hafalan Jadi Petualangan
             </p>
-            <h1 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
+            <h1 className="mt-4 text-4xl font-black leading-tight sm:text-5xl md:text-6xl">
               Juz 30 Quest
             </h1>
-            <p className="mt-4 max-w-2xl text-base font-medium leading-7 text-white/85 sm:text-lg sm:leading-8">
+            <p className="mt-4 max-w-2xl text-sm font-medium leading-7 text-white/85 sm:text-base md:text-lg md:leading-8">
               Pilih surat, susun ayat yang diacak, kejar skor terbaik, dan
               lanjutkan progres dari browser yang sama.
             </p>
@@ -36,7 +36,7 @@ export default function Home() {
               {["78", "93", "100", "108", "112", "114"].map((item) => (
                 <div
                   key={item}
-                  className="flex aspect-square items-center justify-center rounded-2xl bg-white text-xl font-black text-[#0f5f4a] shadow-lg sm:text-2xl"
+                  className="flex aspect-square items-center justify-center rounded-2xl bg-white text-lg font-black text-[#0f5f4a] shadow-lg sm:text-xl md:text-2xl"
                 >
                   {item}
                 </div>
@@ -52,7 +52,7 @@ export default function Home() {
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0f7c68]">
               Pilih Surat
             </p>
-            <h2 className="mt-1 text-3xl font-black">Daftar Juz 30</h2>
+            <h2 className="mt-1 text-2xl font-black sm:text-3xl">Daftar Juz 30</h2>
           </div>
           <p className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#526057] shadow-sm">
             {juz30Surahs.length} surat tersedia
@@ -71,14 +71,14 @@ export default function Home() {
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#0f5f4a] text-sm font-black text-white">
                     {surah.id}
                   </span>
-                  <h3 className="mt-4 text-2xl font-black">
+                  <h3 className="mt-4 text-xl font-black sm:text-2xl">
                     {surah.transliteration}
                   </h3>
                   <p className="mt-1 text-sm font-bold text-[#637167]">
                     {surah.translation}
                   </p>
                 </div>
-                <p dir="rtl" className="text-3xl font-black text-[#0f7c68]">
+                <p dir="rtl" className="text-2xl font-black text-[#0f7c68] sm:text-3xl">
                   {surah.name}
                 </p>
               </div>
