@@ -63,6 +63,44 @@ body {
   border-color: #071b1c;
 }
 
+.juz-scrollbar {
+  scrollbar-color: #0f7c68 #fffaf0;
+  scrollbar-width: thin;
+}
+
+.juz-scrollbar::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.juz-scrollbar::-webkit-scrollbar-track {
+  background: #fffaf0;
+  border-radius: 999px;
+}
+
+.juz-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0f7c68, #ffd56f);
+  border: 2px solid #fffaf0;
+  border-radius: 999px;
+}
+
+.juz-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0b5148, #f6bd42);
+}
+
+:root.dark .juz-scrollbar {
+  scrollbar-color: #ffd56f #071b1c;
+}
+
+:root.dark .juz-scrollbar::-webkit-scrollbar-track {
+  background: #071b1c;
+}
+
+:root.dark .juz-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ffd56f, #1ac89b);
+  border-color: #071b1c;
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;

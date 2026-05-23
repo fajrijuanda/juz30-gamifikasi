@@ -437,7 +437,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
               setIsPickerPanning(false);
             }}
             onPointerCancel={() => setIsPickerPanning(false)}
-            className={`grid flex-1 gap-3 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+            className={`juz-scrollbar grid flex-1 gap-3 overflow-y-auto overscroll-contain pr-2 ${
               isPickerPanning ? "cursor-grabbing select-none" : "cursor-grab"
             }`}
           >
