@@ -262,10 +262,10 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
   return (
     <main className="min-h-screen bg-[#f6f0dd] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed]">
-      <section className="star-field sticky top-0 z-40 overflow-hidden border-b border-[#d9c98d] bg-[#0f5f4a] text-white shadow-lg shadow-black/10 dark:border-[#23574e]">
+      <section className="star-field sticky top-0 z-40 overflow-visible border-b border-[#d9c98d] bg-[#0f5f4a] text-white shadow-lg shadow-black/10 dark:border-[#23574e]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,213,111,0.34),transparent_28%),linear-gradient(135deg,rgba(18,132,104,0.95),rgba(10,66,75,0.95))]" />
-        <div className="relative mx-auto flex max-w-6xl flex-col gap-5 px-5 py-6 sm:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="relative mx-auto flex max-w-6xl flex-col gap-4 px-5 py-4 sm:px-8 lg:py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href="/"
@@ -293,18 +293,20 @@ export function SurahGame({ surah }: { surah: Surah }) {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-            <div>
+          <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end lg:grid-cols-[auto_1fr_auto] lg:items-center">
+            <div className="lg:min-w-72">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#ffd56f] sm:text-sm sm:tracking-[0.22em]">
                 Susun Ayat Juz 30
               </p>
-              <h1 className="mt-2 text-3xl font-black sm:text-4xl md:text-5xl">
+              <h1 className="mt-2 text-3xl font-black sm:text-4xl md:text-5xl lg:text-3xl">
                 {surah.transliteration}
               </h1>
-              <p className="mt-2 text-sm text-white/85 sm:text-base md:text-lg">
+              <p className="mt-2 text-sm text-white/85 sm:text-base md:text-lg lg:text-sm">
                 {surah.translation} - {surah.total_verses} ayat
               </p>
             </div>
+
+            <div className="hidden lg:block" />
 
             <div className="grid grid-cols-2 gap-2 sm:flex">
               <button
@@ -562,14 +564,14 @@ export function SurahGame({ surah }: { surah: Surah }) {
               setIsPickerPanning(false);
             }}
             onPointerCancel={() => setIsPickerPanning(false)}
-            className={`juz-scrollbar grid flex-1 gap-3 overflow-y-auto overscroll-contain pr-2 ${
+            className={`juz-scrollbar grid flex-1 gap-3 overflow-y-auto overscroll-contain pr-2 md:grid-cols-2 ${
               isPickerPanning ? "cursor-grabbing select-none" : "cursor-grab"
             }`}
           >
             {choices.map((verse) => (
               <div
                 key={verse.id}
-                className={`flex min-h-32 flex-col justify-between gap-3 rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:p-4 ${
+                className={`flex min-h-32 flex-col justify-between gap-3 rounded-2xl border p-3 text-right shadow-sm transition hover:-translate-y-1 sm:p-4 md:min-h-36 ${
                   selected?.id === verse.id
                     ? "border-[#0f5f4a] bg-[#d9f3dc] dark:bg-[#143d33]"
                     : "border-[#dccb91] bg-white dark:border-[#376b60] dark:bg-[#102423]"
