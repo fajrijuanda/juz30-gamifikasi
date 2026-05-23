@@ -121,6 +121,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
     return raw ? (JSON.parse(raw) as Progress) : emptyProgress;
   });
   const initialized = useRef(false);
+  const headerRef = useRef<HTMLElement | null>(null);
   const pickerRef = useRef<HTMLDivElement | null>(null);
   const panRef = useRef({
     pointerId: -1,
@@ -139,6 +140,30 @@ export function SurahGame({ surah }: { surah: Surah }) {
 
   const isComplete = placed.length > 0 && placed.every(Boolean);
   const isGameOver = isComplete || isFinished;
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const updateHeaderOffset = () => {
+      document.documentElement.style.setProperty(
+        "--quest-header-height",
+        `${header.offsetHeight}px`,
+      );
+    };
+
+    updateHeaderOffset();
+
+    const observer = new ResizeObserver(updateHeaderOffset);
+    observer.observe(header);
+    window.addEventListener("resize", updateHeaderOffset);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeaderOffset);
+      document.documentElement.style.removeProperty("--quest-header-height");
+    };
+  }, []);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -301,8 +326,11 @@ export function SurahGame({ surah }: { surah: Surah }) {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f0dd] pt-[18.5rem] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed] lg:pt-[10.75rem]">
-      <section className="star-field fixed inset-x-0 top-0 z-40 overflow-visible border-b border-[#d9c98d] bg-[#0f5f4a] text-white shadow-lg shadow-black/10 dark:border-[#23574e]">
+    <main className="min-h-screen bg-[#f6f0dd] pt-[var(--quest-header-height,18.5rem)] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed]">
+      <section
+        ref={headerRef}
+        className="star-field fixed inset-x-0 top-0 z-40 overflow-visible border-b border-[#d9c98d] bg-[#0f5f4a] text-white shadow-lg shadow-black/10 dark:border-[#23574e]"
+      >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,213,111,0.34),transparent_28%),linear-gradient(135deg,rgba(18,132,104,0.95),rgba(10,66,75,0.95))]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-4 px-5 py-4 sm:px-8 lg:py-3">
           <div className="flex flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
