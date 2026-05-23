@@ -14,9 +14,9 @@ export function AppLoadingScreen() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-[#0b5148] text-white">
+    <div className="fixed inset-0 z-[100] grid min-h-dvh place-items-center overflow-hidden bg-[#0b5148] text-white">
       <div className="absolute inset-0 star-field" />
-      <div className="relative flex flex-col items-center gap-5 px-6 text-center">
+      <div className="relative flex -translate-y-6 flex-col items-center gap-5 px-6 text-center sm:-translate-y-8">
         <div className="relative grid h-24 w-24 place-items-center rounded-[2rem] bg-[#ffd56f] text-[#0f3f37] shadow-2xl shadow-black/30">
           <Sparkles className="absolute -right-2 -top-2 h-8 w-8 animate-pulse text-white" />
           <BookOpen className="h-12 w-12 animate-[book-breathe_1.4s_ease-in-out_infinite]" />
