@@ -191,6 +191,14 @@ export function SurahGame({ surah }: { surah: Surah }) {
   function playVerseAudio(verse: Verse) {
     const audio = audioRef.current ?? new Audio();
     audioRef.current = audio;
+
+    if (playingVerseId === verse.id && !audio.paused) {
+      audio.pause();
+      audio.currentTime = 0;
+      setPlayingVerseId(null);
+      return;
+    }
+
     audio.pause();
     audio.currentTime = 0;
     audio.src = getVerseAudioUrl(surah.id, verse.id);
