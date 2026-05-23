@@ -106,7 +106,7 @@ export function LeaderboardView() {
 
   return (
     <main className="min-h-screen bg-[#f6f0dd] text-[#14342b] transition-colors dark:bg-[#071b1c] dark:text-[#eff8ed]">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b5148]/95 text-white shadow-lg shadow-black/10 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b5148] text-white shadow-lg shadow-black/10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-8">
           <Link href="/" onClick={showAppLoading} className="text-base font-black sm:text-lg">
             <span className="inline-flex items-center gap-2">
