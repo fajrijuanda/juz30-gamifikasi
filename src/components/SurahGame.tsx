@@ -68,6 +68,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [selected, setSelected] = useState<Verse | null>(null);
   const [draggingVerseId, setDraggingVerseId] = useState<number | null>(null);
   const [isPickerPanning, setIsPickerPanning] = useState(false);
+  const [isPickerExpanded, setIsPickerExpanded] = useState(false);
   const [isMissionOpen, setIsMissionOpen] = useState(false);
   const [isGameMenuOpen, setIsGameMenuOpen] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -90,6 +91,10 @@ export function SurahGame({ surah }: { surah: Surah }) {
     pointerId: -1,
     startY: 0,
     scrollTop: 0,
+  });
+  const sheetDragRef = useRef({
+    pointerId: -1,
+    startY: 0,
   });
 
   const score = useMemo(() => {
@@ -330,7 +335,13 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-5 px-4 py-5 pb-[calc(34svh+1.5rem)] sm:px-8 sm:py-6 sm:pb-56 md:gap-6">
+      <section
+        className={`mx-auto grid max-w-6xl gap-5 px-4 py-5 sm:px-8 sm:py-6 md:gap-6 ${
+          isPickerExpanded
+            ? "pb-[calc(62svh+1.5rem)] lg:pb-[calc(54vh+1.5rem)]"
+            : "pb-[calc(22svh+1.5rem)] lg:pb-[calc(24vh+1.5rem)]"
+        }`}
+      >
         <div className="grid gap-3">
           {surah.verses.map((verse, index) => {
             const current = placed[index];
@@ -520,16 +531,49 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
       ) : null}
 
-      <section className="fixed inset-x-0 bottom-0 h-[34svh] overflow-hidden border-t border-[#d8c173] bg-[#fffaf0]/95 p-3 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur dark:border-[#376b60] dark:bg-[#071b1c]/95 sm:h-auto sm:max-h-[42svh] sm:p-4">
+      <section
+        className={`fixed inset-x-0 bottom-0 overflow-hidden border-t border-[#d8c173] bg-[#fffaf0]/95 p-3 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur transition-[height] duration-300 ease-out dark:border-[#376b60] dark:bg-[#071b1c]/95 sm:p-4 ${
+          isPickerExpanded ? "h-[62svh] lg:h-[54vh]" : "h-[22svh] lg:h-[24vh]"
+        }`}
+      >
         <div className="mx-auto flex h-full max-w-6xl flex-col">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="inline-flex items-center gap-2 text-sm font-black text-[#14342b] dark:text-[#eff8ed]">
-              <Headphones className="h-4 w-4" aria-hidden="true" />
-              Pilihan Ayat {selected ? "- Ayat dipilih" : ""}
-            </p>
-            <p className="hidden text-xs font-bold text-[#6c7055] dark:text-[#a6c3b7] sm:block">
-              Klik pilihan, lalu klik kotak kosong yang sesuai
-            </p>
+          <div
+            className="mb-3 flex cursor-grab flex-col items-center gap-2 active:cursor-grabbing"
+            onPointerDown={(event) => {
+              sheetDragRef.current = {
+                pointerId: event.pointerId,
+                startY: event.clientY,
+              };
+              event.currentTarget.setPointerCapture(event.pointerId);
+            }}
+            onPointerUp={(event) => {
+              if (sheetDragRef.current.pointerId !== event.pointerId) return;
+
+              const deltaY = event.clientY - sheetDragRef.current.startY;
+              if (deltaY < -18) setIsPickerExpanded(true);
+              if (deltaY > 18) setIsPickerExpanded(false);
+            }}
+            onPointerCancel={() => {
+              sheetDragRef.current.pointerId = -1;
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setIsPickerExpanded((current) => !current)}
+              className="h-1.5 w-16 rounded-full bg-[#0f7c68]/45 transition hover:bg-[#0f7c68] dark:bg-[#ffd56f]/55 dark:hover:bg-[#ffd56f]"
+              aria-label={isPickerExpanded ? "Tutup pilihan ayat" : "Buka pilihan ayat"}
+            />
+            <div className="flex w-full items-center justify-between gap-3">
+              <p className="inline-flex items-center gap-2 text-sm font-black text-[#14342b] dark:text-[#eff8ed]">
+                <Headphones className="h-4 w-4" aria-hidden="true" />
+                Pilihan Ayat {selected ? "- Ayat dipilih" : ""}
+              </p>
+              <p className="hidden text-xs font-bold text-[#6c7055] dark:text-[#a6c3b7] sm:block">
+                {isPickerExpanded
+                  ? "Tarik handle ke bawah untuk menutup"
+                  : "Tarik handle ke atas untuk membuka"}
+              </p>
+            </div>
           </div>
           <div
             ref={pickerRef}
