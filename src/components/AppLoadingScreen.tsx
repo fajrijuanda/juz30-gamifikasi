@@ -1,14 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BookOpen, Sparkles } from "lucide-react";
+import { usePathname } from "next/navigation";
+
+const loadingEventName = "juz30-loading-start";
+
+export function showAppLoading() {
+  window.dispatchEvent(new Event(loadingEventName));
+}
 
 export function AppLoadingScreen() {
   const [isVisible, setIsVisible] = useState(true);
+  const pathname = usePathname();
+  const timeoutRef = useRef<number | null>(null);
+
+  function showFor(duration: number) {
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+    }
+
+    setIsVisible(true);
+    timeoutRef.current = window.setTimeout(() => setIsVisible(false), duration);
+  }
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setIsVisible(false), 950);
-    return () => window.clearTimeout(timeout);
+    const startTimeout = window.setTimeout(() => showFor(900), 0);
+
+    return () => {
+      window.clearTimeout(startTimeout);
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    const onStartLoading = () => showFor(1300);
+
+    window.addEventListener(loadingEventName, onStartLoading);
+    return () => window.removeEventListener(loadingEventName, onStartLoading);
   }, []);
 
   if (!isVisible) return null;

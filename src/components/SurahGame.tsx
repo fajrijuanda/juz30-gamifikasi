@@ -16,6 +16,7 @@ import {
   Volume2,
   XCircle,
 } from "lucide-react";
+import { showAppLoading } from "@/components/AppLoadingScreen";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Surah, Verse } from "@/lib/juz30";
 import { getVerseAudioUrl } from "@/lib/juz30";
@@ -240,6 +241,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href="/"
+                onClick={showAppLoading}
                 className="inline-flex items-center gap-2 rounded-full border border-white/35 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />

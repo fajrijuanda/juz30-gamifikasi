@@ -9,6 +9,7 @@ import {
   Sparkles,
   Star,
 } from "lucide-react";
+import { showAppLoading } from "@/components/AppLoadingScreen";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getSurahLevel, juz30Surahs } from "@/lib/juz30";
 
@@ -109,6 +110,7 @@ export default function Home() {
             <Link
               key={surah.id}
               href={`/surah/${surah.id}`}
+              onClick={showAppLoading}
               className="group rounded-2xl border border-[#dccb91] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#0f7c68] hover:shadow-xl dark:border-[#376b60] dark:bg-[#102423]"
             >
               <div className="flex items-start justify-between gap-4">
