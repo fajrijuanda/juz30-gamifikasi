@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { getCurrentThemeMode, setThemeMode, type ThemeMode } from "@/components/ThemeProvider";
 
 const modes: ThemeMode[] = ["light", "dark", "system"];
@@ -9,6 +10,12 @@ const labels: Record<ThemeMode, string> = {
   light: "Light",
   dark: "Dark",
   system: "System",
+};
+
+const icons = {
+  light: Sun,
+  dark: Moon,
+  system: Monitor,
 };
 
 export function ThemeToggle() {
@@ -33,13 +40,17 @@ export function ThemeToggle() {
             setMode(item);
             setThemeMode(item);
           }}
-          className={`rounded-full px-3 py-2 transition ${
+          className={`inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-2 transition ${
             mode === item
               ? "bg-white text-[#0f5f4a] shadow-sm dark:bg-[#ffd56f] dark:text-[#112f28]"
               : "text-white/80 hover:bg-white/10 hover:text-white"
           }`}
           aria-pressed={mode === item}
         >
+          {(() => {
+            const Icon = icons[item];
+            return <Icon className="h-3.5 w-3.5" aria-hidden="true" />;
+          })()}
           {labels[item]}
         </button>
       ))}

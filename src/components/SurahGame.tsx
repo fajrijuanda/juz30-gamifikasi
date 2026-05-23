@@ -2,6 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Clock3,
+  Flame,
+  Headphones,
+  Pause,
+  Play,
+  RotateCcw,
+  Sparkles,
+  Trophy,
+  Volume2,
+  XCircle,
+} from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Surah, Verse } from "@/lib/juz30";
 import { getVerseAudioUrl } from "@/lib/juz30";
@@ -195,20 +209,24 @@ export function SurahGame({ surah }: { surah: Surah }) {
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href="/"
-                className="rounded-full border border-white/35 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+                className="inline-flex items-center gap-2 rounded-full border border-white/35 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
               >
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                 Kembali
               </Link>
               <ThemeToggle />
             </div>
             <div className="grid w-full grid-cols-3 gap-2 text-center text-xs font-bold sm:w-auto sm:text-sm">
-              <span className="rounded-full bg-white/15 px-3 py-2 sm:px-4">
+              <span className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/15 px-3 py-2 sm:px-4">
+                <Clock3 className="h-4 w-4" aria-hidden="true" />
                 Waktu {formatTime(seconds)}
               </span>
-              <span className="rounded-full bg-[#ffd56f] px-3 py-2 text-[#163528] sm:px-4">
+              <span className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#ffd56f] px-3 py-2 text-[#163528] sm:px-4">
+                <Trophy className="h-4 w-4" aria-hidden="true" />
                 Skor {score}
               </span>
-              <span className="rounded-full bg-white/15 px-3 py-2 sm:px-4">
+              <span className="inline-flex items-center justify-center gap-1.5 rounded-full bg-white/15 px-3 py-2 sm:px-4">
+                <Sparkles className="h-4 w-4" aria-hidden="true" />
                 Terbaik {progress.bestScore}
               </span>
             </div>
@@ -231,15 +249,21 @@ export function SurahGame({ surah }: { surah: Surah }) {
               <button
                 type="button"
                 onClick={() => setIsRunning((current) => !current)}
-                className="rounded-full bg-white px-4 py-3 text-sm font-black text-[#0f5f4a] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-black text-[#0f5f4a] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
               >
+                {isRunning ? (
+                  <Pause className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Play className="h-4 w-4" aria-hidden="true" />
+                )}
                 {isRunning ? "Pause" : "Play"}
               </button>
               <button
                 type="button"
                 onClick={restart}
-                className="rounded-full bg-[#ffd56f] px-4 py-3 text-sm font-black text-[#2f2610] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ffd56f] px-4 py-3 text-sm font-black text-[#2f2610] shadow-lg shadow-black/15 transition hover:scale-105 sm:px-5"
               >
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
                 Acak Lagi
               </button>
             </div>
@@ -285,20 +309,32 @@ export function SurahGame({ surah }: { surah: Surah }) {
         </div>
 
         <aside className="h-fit rounded-2xl border border-[#ddcc90] bg-white p-5 shadow-sm dark:border-[#376b60] dark:bg-[#102423]">
-          <h2 className="text-base font-black sm:text-lg">Misi Hari Ini</h2>
+          <h2 className="inline-flex items-center gap-2 text-base font-black sm:text-lg">
+            <Sparkles className="h-5 w-5 text-[#0f7c68] dark:text-[#ffd56f]" aria-hidden="true" />
+            Misi Hari Ini
+          </h2>
           <div className="mt-4 grid gap-3 text-sm font-semibold text-[#37574c] dark:text-[#d9efe5]">
             <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
-              <span>Terisi</span>
+              <span className="inline-flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                Terisi
+              </span>
               <span>
                 {placed.filter(Boolean).length}/{surah.total_verses}
               </span>
             </div>
             <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
-              <span>Kombo</span>
+              <span className="inline-flex items-center gap-2">
+                <Flame className="h-4 w-4" aria-hidden="true" />
+                Kombo
+              </span>
               <span>{streak}x</span>
             </div>
             <div className="flex justify-between rounded-xl bg-[#f7f1df] p-3 dark:bg-[#1b3734]">
-              <span>Salah</span>
+              <span className="inline-flex items-center gap-2">
+                <XCircle className="h-4 w-4" aria-hidden="true" />
+                Salah
+              </span>
               <span>{mistakes}</span>
             </div>
           </div>
@@ -318,7 +354,8 @@ export function SurahGame({ surah }: { surah: Surah }) {
       <section className="fixed inset-x-0 bottom-0 h-[34svh] overflow-hidden border-t border-[#d8c173] bg-[#fffaf0]/95 p-3 shadow-[0_-10px_30px_rgba(36,45,28,0.13)] backdrop-blur dark:border-[#376b60] dark:bg-[#071b1c]/95 sm:h-auto sm:max-h-[42svh] sm:p-4">
         <div className="mx-auto flex h-full max-w-6xl flex-col">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="text-sm font-black text-[#14342b] dark:text-[#eff8ed]">
+            <p className="inline-flex items-center gap-2 text-sm font-black text-[#14342b] dark:text-[#eff8ed]">
+              <Headphones className="h-4 w-4" aria-hidden="true" />
               Pilihan Ayat {selected ? "- Ayat dipilih" : ""}
             </p>
             <p className="hidden text-xs font-bold text-[#6c7055] dark:text-[#a6c3b7] sm:block">
@@ -343,6 +380,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
                     }}
                     className="inline-flex rounded-full bg-[#0f5f4a] px-3 py-2 text-[11px] font-black text-white dark:bg-[#ffd56f] dark:text-[#102423]"
                   >
+                    <Volume2 className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
                     {playingVerseId === verse.id ? "Memutar" : "Dengar"}
                   </button>
                 </span>

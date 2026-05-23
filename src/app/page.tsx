@@ -1,4 +1,14 @@
 import Link from "next/link";
+import {
+  BookOpen,
+  CheckCircle2,
+  Clock3,
+  Gamepad2,
+  ListChecks,
+  Lock,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getSurahLevel, juz30Surahs } from "@/lib/juz30";
 
@@ -8,14 +18,18 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b5148]/95 text-white shadow-lg shadow-black/10 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3 sm:px-8">
           <Link href="/" className="text-base font-black sm:text-lg">
-            Juz 30 Quest
+            <span className="inline-flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-[#ffd56f]" aria-hidden="true" />
+              Juz 30 Quest
+            </span>
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <a
               href="#daftar-surat"
-              className="hidden rounded-full bg-white px-4 py-2 text-xs font-black text-[#0f5f4a] transition hover:bg-[#ffd56f] sm:inline-flex"
+              className="hidden items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#0f5f4a] transition hover:bg-[#ffd56f] sm:inline-flex"
             >
+              <ListChecks className="h-4 w-4" aria-hidden="true" />
               Daftar Surat
             </a>
           </div>
@@ -27,7 +41,10 @@ export default function Home() {
         <div className="relative mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:px-8 sm:py-12 md:grid-cols-[1.05fr_0.95fr] md:items-center lg:py-14">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#ffd56f] sm:text-sm sm:tracking-[0.26em]">
-              Hafalan Jadi Petualangan
+              <span className="inline-flex items-center gap-2">
+                <Star className="h-4 w-4 fill-[#ffd56f]" aria-hidden="true" />
+                Hafalan Jadi Petualangan
+              </span>
             </p>
             <h1 className="mt-4 text-4xl font-black leading-tight sm:text-5xl md:text-6xl">
               Juz 30 Quest
@@ -37,13 +54,16 @@ export default function Home() {
               lanjutkan progres dari browser yang sama.
             </p>
             <div className="mt-6 flex flex-wrap gap-3 text-sm font-black">
-              <span className="rounded-full bg-white px-4 py-2 text-[#0f5f4a]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[#0f5f4a]">
+                <Lock className="h-4 w-4" aria-hidden="true" />
                 Tanpa Login
               </span>
-              <span className="rounded-full bg-[#ffd56f] px-4 py-2 text-[#2d250d]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-[#ffd56f] px-4 py-2 text-[#2d250d]">
+                <Clock3 className="h-4 w-4" aria-hidden="true" />
                 Timer & Skor
               </span>
-              <span className="rounded-full bg-white/15 px-4 py-2">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2">
+                <Gamepad2 className="h-4 w-4" aria-hidden="true" />
                 Data Statis
               </span>
             </div>
@@ -71,11 +91,15 @@ export default function Home() {
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#0f7c68] dark:text-[#83e8c7]">
-              Pilih Surat
+              <span className="inline-flex items-center gap-2">
+                <BookOpen className="h-4 w-4" aria-hidden="true" />
+                Pilih Surat
+              </span>
             </p>
             <h2 className="mt-1 text-2xl font-black sm:text-3xl">Daftar Juz 30</h2>
           </div>
-          <p className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#526057] shadow-sm dark:bg-[#102e2d] dark:text-[#d9efe5]">
+          <p className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#526057] shadow-sm dark:bg-[#102e2d] dark:text-[#d9efe5]">
+            <CheckCircle2 className="h-4 w-4 text-[#0f7c68]" aria-hidden="true" />
             {juz30Surahs.length} surat tersedia
           </p>
         </div>
@@ -105,9 +129,11 @@ export default function Home() {
               </div>
               <div className="mt-5 flex items-center justify-between gap-3 text-sm font-black">
                 <span className="rounded-full bg-[#f7f1df] px-3 py-2 text-[#675a30] dark:bg-[#1b3734] dark:text-[#f3daa0]">
+                  <BookOpen className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />
                   {surah.total_verses} ayat
                 </span>
                 <span className="rounded-full bg-[#d9f3dc] px-3 py-2 text-[#17603f] dark:bg-[#174038] dark:text-[#8ce5c6]">
+                  <Star className="mr-1 inline h-3.5 w-3.5 fill-current" aria-hidden="true" />
                   {getSurahLevel(surah.total_verses)}
                 </span>
               </div>
