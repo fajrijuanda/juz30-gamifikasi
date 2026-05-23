@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Poppins } from "next/font/google";
+import { AppLoadingScreen } from "@/components/AppLoadingScreen";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
@@ -31,7 +32,10 @@ export default function RootLayout({
       className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AppLoadingScreen />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

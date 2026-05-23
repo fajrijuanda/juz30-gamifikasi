@@ -20,12 +20,54 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath fill='%23ffd56f' stroke='%230b5148' stroke-width='2' d='M5 3l16 9-7 2.5L11.5 22z'/%3E%3Ccircle cx='20' cy='7' r='2' fill='%23ffffff'/%3E%3C/svg%3E")
+      4 3,
+    auto;
   font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
+  scrollbar-color: #0f7c68 #f6f0dd;
+  scrollbar-width: thin;
+}
+
+:root.dark body {
+  scrollbar-color: #ffd56f #071b1c;
+}
+
+*::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f6f0dd;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0f7c68, #ffd56f);
+  border: 3px solid #f6f0dd;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0b5148, #f6bd42);
+}
+
+:root.dark *::-webkit-scrollbar-track {
+  background: #071b1c;
+}
+
+:root.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ffd56f, #1ac89b);
+  border-color: #071b1c;
 }
 
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath fill='%231ac89b' stroke='%23ffffff' stroke-width='2' d='M6 4l17 10-7 2-3 8z'/%3E%3Cpath fill='%23ffd56f' d='M20 3l1.2 2.6L24 7l-2.8 1.4L20 11l-1.2-2.6L16 7l2.8-1.4z'/%3E%3C/svg%3E")
+      4 3,
+    pointer;
 }
 
 .star-field {
@@ -74,5 +116,29 @@ a {
   to {
     opacity: 0.72;
     transform: translateY(-4px);
+  }
+}
+
+@keyframes book-breathe {
+  0%,
+  100% {
+    transform: scale(1) rotate(-2deg);
+  }
+
+  50% {
+    transform: scale(1.12) rotate(2deg);
+  }
+}
+
+@keyframes dot-bounce {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-8px);
   }
 }
