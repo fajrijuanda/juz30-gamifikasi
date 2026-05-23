@@ -58,9 +58,27 @@ export const defaultReciterId: AudioReciterId = "Alafasy_128kbps";
 
 const juz30Ids = Array.from({ length: 37 }, (_, index) => index + 78);
 
+function cleanTranslation(text: string | undefined): string | undefined {
+  if (!text) return text;
+  return text
+    .replace("(Tidak!892)", "(Tidak!)")
+    .replace("rūḥ894)", "rūḥ)")
+    .replace("(Sekali-kali tidak!901)", "(Sekali-kali tidak!)")
+    .replace("bingung,912)", "bingung)")
+    .replace("mu914)", "mu")
+    .replace("berkelompok-kelompok,922)", "berkelompok-kelompok)");
+}
+
 export const juz30Surahs = (quran as Surah[])
   .filter((surah) => juz30Ids.includes(surah.id))
-  .sort((a, b) => a.id - b.id);
+  .sort((a, b) => a.id - b.id)
+  .map((surah) => ({
+    ...surah,
+    verses: surah.verses.map((verse) => ({
+      ...verse,
+      translation: cleanTranslation(verse.translation),
+    })),
+  }));
 
 export function getSurah(id: number) {
   return juz30Surahs.find((surah) => surah.id === id);
