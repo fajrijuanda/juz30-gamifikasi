@@ -11,6 +11,8 @@ type Progress = {
   completed: boolean;
 };
 
+type SlotFeedback = "correct" | "wrong" | null;
+
 const emptyProgress: Progress = {
   bestScore: 0,
   completed: false,
@@ -51,6 +53,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   const [seconds, setSeconds] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [slotFeedback, setSlotFeedback] = useState<SlotFeedback[]>([]);
   const [progress, setProgress] = useState<Progress>(() => {
     if (typeof window === "undefined") return emptyProgress;
 
@@ -72,6 +75,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
     initialized.current = true;
     setChoices(shuffle(surah.verses));
     setPlaced(Array.from({ length: surah.verses.length }, () => null));
+    setSlotFeedback(Array.from({ length: surah.verses.length }, () => null));
   }, [surah.verses]);
 
   useEffect(() => {
@@ -87,6 +91,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
   function restart() {
     setChoices(shuffle(surah.verses));
     setPlaced(Array.from({ length: surah.verses.length }, () => null));
+    setSlotFeedback(Array.from({ length: surah.verses.length }, () => null));
     setSelected(null);
     setSeconds(0);
     setMistakes(0);
@@ -112,6 +117,11 @@ export function SurahGame({ surah }: { surah: Surah }) {
       setPlaced((current) => {
         const next = [...current];
         next[index] = selected;
+        return next;
+      });
+      setSlotFeedback((current) => {
+        const next = [...current];
+        next[index] = "correct";
         return next;
       });
       setChoices((current) => current.filter((verse) => verse.id !== selected.id));
@@ -141,8 +151,23 @@ export function SurahGame({ surah }: { surah: Surah }) {
       return;
     }
 
+    setSlotFeedback((current) => {
+      const next = [...current];
+      next[index] = "wrong";
+      return next;
+    });
     setMistakes((current) => current + 1);
     setStreak(0);
+
+    window.setTimeout(() => {
+      setSlotFeedback((current) => {
+        if (current[index] !== "wrong") return current;
+
+        const next = [...current];
+        next[index] = null;
+        return next;
+      });
+    }, 700);
   }
 
   return (
@@ -213,17 +238,20 @@ export function SurahGame({ surah }: { surah: Surah }) {
                 key={verse.id}
                 type="button"
                 onClick={() => placeVerse(index)}
+                disabled={Boolean(current)}
                 className={`min-h-20 rounded-2xl border-2 p-3 text-left shadow-sm transition sm:min-h-24 sm:p-4 ${
-                  current
-                    ? "border-[#24a06d] bg-white"
-                    : selected
-                      ? "border-dashed border-[#0f7c68] bg-white/85 hover:bg-white"
-                      : "border-dashed border-[#c6ad59] bg-[#fffaf0]"
-                }`}
+                  slotFeedback[index] === "correct"
+                    ? "border-[#18a058] bg-[#e3f7df] ring-2 ring-[#18a058]/25"
+                    : slotFeedback[index] === "wrong"
+                      ? "border-[#d64545] bg-[#ffe7e2] ring-2 ring-[#d64545]/25"
+                      : selected
+                        ? "border-dashed border-[#0f7c68] bg-white/85 hover:bg-white"
+                        : "border-dashed border-[#c6ad59] bg-[#fffaf0]"
+                } ${current ? "cursor-default" : "cursor-pointer"}`}
               >
                 <div className="flex items-center justify-between gap-3 sm:gap-4">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0f5f4a] text-xs font-black text-white sm:h-10 sm:w-10 sm:text-sm">
-                    {index + 1}
+                    {current ? "✓" : index + 1}
                   </span>
                   <span
                     dir="rtl"
@@ -270,7 +298,7 @@ export function SurahGame({ surah }: { surah: Surah }) {
         <div className="mx-auto flex h-full max-w-6xl flex-col">
           <div className="mb-3 flex items-center justify-between gap-3">
             <p className="text-sm font-black text-[#14342b]">
-              Pilihan Ayat {selected ? `- Ayat ${selected.id} dipilih` : ""}
+              Pilihan Ayat {selected ? "- Ayat dipilih" : ""}
             </p>
             <p className="hidden text-xs font-bold text-[#6c7055] sm:block">
               Klik pilihan, lalu klik kotak kosong yang sesuai
@@ -288,9 +316,6 @@ export function SurahGame({ surah }: { surah: Surah }) {
                     : "border-[#dccb91] bg-white"
                 }`}
               >
-                <span className="mb-2 block text-left text-xs font-black text-[#0f5f4a]">
-                  Ayat {verse.id}
-                </span>
                 <span
                   dir="rtl"
                   className="block text-lg font-bold leading-relaxed text-[#1d2f28] sm:text-2xl md:text-[1.55rem]"
